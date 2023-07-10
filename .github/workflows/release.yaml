@@ -1,0 +1,36 @@
+on:
+  push:
+    tags:
+      - 'v*'
+name: Create Release
+
+jobs:
+  build:
+    name: Create Release
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+        with:
+          lfs: true
+          submodules: true
+      - name: Checkout submodules
+        shell: bash
+        run: |
+          git submodule sync --recursive
+          git -c "http.extraheader=$auth_header" -c protocol.version=2 submodule update --init --force --recursive --depth=1
+      - name: Create archive
+        shell: bash
+        run: |
+          rm -rf .git/
+          tar cfJ untitled-imgui-text-utils.tar.xz . || echo "Might have failed"
+      - name: Create Release
+        uses: softprops/action-gh-release@master
+        with:
+          body: |
+            Check our discord for patch notes: https://discord.gg/4kyWu2Vu
+            More on what is done this month can be found on the latest newsletter entry: https://madladsquad.com/#monthly-newsletter
+          draft: false
+          prerelease: false
+          files: untitled-imgui-text-utils.tar.xz
+          generate_release_notes: false
