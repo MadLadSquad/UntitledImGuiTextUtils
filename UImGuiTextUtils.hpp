@@ -12,6 +12,9 @@
 // The default colour for links that have been visited
 #define UIMGUI_LINK_TEXT_VISITED IM_COL32(85, 26, 139, 255)
 
+// The default highlight text colour, yellow with ~25% opacity
+#define UIMGUI_HIGHLIGHT_TEXT_COLOUR IM_COL32(255, 255, 0, 64)
+
 namespace UImGui
 {
     struct IMGUI_API TextUtilsData
@@ -90,10 +93,10 @@ namespace UImGui
          * UIMGUI_TEXT_COLOUR macro
          * @return State of the text, represented using the WidgetState bitmask
          */
-        static WidgetState UnderlineWrapped(const char* text, const char* end, ImColor color = UIMGUI_TEXT_COLOUR) noexcept;
+        static WidgetState UnderlineWrapped(const char* text, const char* end, ImColor colour = UIMGUI_TEXT_COLOUR) noexcept;
 
         // std::string wrapper on top of UnderlineWrapped
-        static WidgetState UnderlineWrapped(const std::string& text, ImColor color = UIMGUI_TEXT_COLOUR) noexcept;
+        static WidgetState UnderlineWrapped(const std::string& text, ImColor colour = UIMGUI_TEXT_COLOUR) noexcept;
 
         /**
          * @brief Cross out the element above
@@ -130,10 +133,10 @@ namespace UImGui
          * UIMGUI_TEXT_COLOUR macro
          * @return State of the text, represented using the WidgetState bitmask
          */
-        static WidgetState StrikethroughWrapped(const char* text, const char* end, ImColor color = UIMGUI_TEXT_COLOUR) noexcept;
+        static WidgetState StrikethroughWrapped(const char* text, const char* end, ImColor colour = UIMGUI_TEXT_COLOUR) noexcept;
 
         // std::string wrapper on top of StrikethroughWrapped
-        static WidgetState StrikethroughWrapped(const std::string& text, ImColor color = UIMGUI_TEXT_COLOUR) noexcept;
+        static WidgetState StrikethroughWrapped(const std::string& text, ImColor colour = UIMGUI_TEXT_COLOUR) noexcept;
 
 
         /**
@@ -158,11 +161,53 @@ namespace UImGui
         // std::string wrapper on top of LinkWrapped
         static void LinkWrapped(const std::string& text, ImColor colour = UIMGUI_LINK_TEXT_UNVISITED,
                                 const std::function<void(const char* link)>& clicked = getData().defaultLinkClickEvent) noexcept;
+
+        /**
+         * @brief Highlight the element above
+         * @param colour - Colour of the line, defaults to the current text colour, represented by the
+         * UIMGUI_HIGHLIGHT_TEXT_COLOUR macro
+         */
+        static void Highlight(ImColor colour = UIMGUI_HIGHLIGHT_TEXT_COLOUR) noexcept;
+
+        /**
+         * @brief Abstraction on top of ImGui::Text for highlighted text. Renders highlighted text without word wrapping
+         * @tparam Args - A templated variadic list of elements to be formatted by the format string
+         * @param fmt - The format string
+         * @param colour - Colour of the line, defaults to the current text colour, represented by the
+         * UIMGUI_HIGHLIGHT_TEXT_COLOUR macro
+         * @param args - Variadic arguments passed to ImGui::Text
+         * @return State of the text, represented using the WidgetState bitmask
+         */
+        template<typename ...Args>
+        static WidgetState Highlight(const char* fmt, ImColor colour = UIMGUI_HIGHLIGHT_TEXT_COLOUR, Args... args) noexcept
+        {
+            ImGui::Text(fmt, (args)...);
+            auto bHovered = ImGui::IsItemHovered() ? UIMGUI_TEXT_UTILS_WIDGET_STATE_HOVERED : 0;
+            auto bClicked = ImGui::IsMouseClicked(ImGuiMouseButton_Left) ? UIMGUI_TEXT_UTILS_WIDGET_STATE_CLICKED : 0;
+            Highlight(colour);
+
+            return static_cast<WidgetState>(bHovered | bClicked);
+        }
+
+        /**
+         * @brief Renders highlighted text with word wrapping
+         * @param text - The text pointer
+         * @param end - Text pointer to the end of the text
+         * @param colour - Colour of the line, defaults to the current text colour, represented by the
+         * UIMGUI_HIGHLIGHT_TEXT_COLOUR macro
+         * @return State of the text, represented using the WidgetState bitmask
+         */
+        static WidgetState HighlightWrapped(const char* text, const char* end, ImColor colour = UIMGUI_HIGHLIGHT_TEXT_COLOUR) noexcept;
+
+        // std::string wrapper on top of HighlightWrapped
+        static WidgetState HighlightWrapped(const std::string& text, ImColor colour = UIMGUI_HIGHLIGHT_TEXT_COLOUR) noexcept;
     private:
         static void customFontGenericText(const char* fmt, ImFont* font, va_list args) noexcept;
         static void customFontGenericTextWrapped(const char* fmt, ImFont* font, va_list args) noexcept;
 
         static bool isPartOfWord(char character) noexcept;
         static TextUtilsData& getData() noexcept;
+
+        static WidgetState renderWrappedTextGeneric(const char* text, const char* end, ImColor colour, const std::function<void(ImColor colour)>& f) noexcept;
     };
 }

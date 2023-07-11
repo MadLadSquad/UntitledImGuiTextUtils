@@ -15,7 +15,7 @@ A bunch of small utility functions to make marking down text in ImGui easier. We
 - [ ] Code block
 - [ ] Subscript
 - [ ] Superscript
-- [ ] Highlighted text
+- [x] Highlighted text
 - [ ] Ruby text
 - [ ] Keyboard
 

@@ -17,52 +17,7 @@ void UImGui::TextUtils::Underline(ImColor colour) noexcept
 
 UImGui::TextUtils::WidgetState UImGui::TextUtils::UnderlineWrapped(const char* text, const char* end, ImColor colour) noexcept
 {
-    float scale = ImGui::GetIO().FontGlobalScale;
-    float widthAvail = ImGui::GetContentRegionAvail().x;
-    const char* endLine = text;
-
-    if (widthAvail > 0.0f)
-        endLine = ImGui::GetFont()->CalcWordWrapPositionA(scale, text, end, widthAvail);
-    if (endLine > text && endLine < end)
-    {
-        if (isPartOfWord(*endLine))
-        {
-            float nextLineWidth = ImGui::GetContentRegionMax().x;
-            const char* nextLineEnd = ImGui::GetFont()->CalcWordWrapPositionA(scale, text, end, nextLineWidth);
-            if (nextLineEnd == end || (nextLineEnd <= end && !isPartOfWord(*nextLineEnd)))
-                endLine = text;
-        }
-    }
-
-    ImGui::PushTextWrapPos(-1.0f);
-    ImGui::TextUnformatted(text, endLine);
-    auto bHovered = ImGui::IsItemHovered() ? UIMGUI_TEXT_UTILS_WIDGET_STATE_HOVERED : 0;
-    auto bClicked = ImGui::IsMouseClicked(ImGuiMouseButton_Left) ? UIMGUI_TEXT_UTILS_WIDGET_STATE_CLICKED : 0;
-
-    Underline(colour);
-    ImGui::PopTextWrapPos();
-
-    widthAvail = ImGui::GetContentRegionAvail().x;
-    auto result = static_cast<WidgetState>(bHovered | bClicked);
-    while (endLine < end)
-    {
-        text = endLine;
-        if (*text == ' ')
-            ++text;
-        endLine = ImGui::GetFont()->CalcWordWrapPositionA(scale, text, end, widthAvail);
-        if (text == endLine)
-            endLine++;
-        ImGui::PushTextWrapPos(-1.0f);
-        ImGui::TextUnformatted(text, endLine);
-        bHovered = ImGui::IsItemHovered() ? UIMGUI_TEXT_UTILS_WIDGET_STATE_HOVERED : 0;
-        bClicked = ImGui::IsMouseClicked(ImGuiMouseButton_Left) ? UIMGUI_TEXT_UTILS_WIDGET_STATE_CLICKED : 0;
-        Underline(colour);
-
-        result = static_cast<WidgetState>(result | bHovered | bClicked);
-
-        ImGui::PopTextWrapPos();
-    }
-    return result;
+    return renderWrappedTextGeneric(text, end, colour, [](ImColor color) -> void { Underline(color); });
 }
 
 bool UImGui::TextUtils::isPartOfWord(char character) noexcept
@@ -98,9 +53,9 @@ void UImGui::TextUtils::LinkWrapped(const char* text, const char* end, ImColor c
     ImGui::PopStyleColor();
 }
 
-UImGui::TextUtils::WidgetState UImGui::TextUtils::UnderlineWrapped(const std::string& text, ImColor color) noexcept
+UImGui::TextUtils::WidgetState UImGui::TextUtils::UnderlineWrapped(const std::string& text, ImColor colour) noexcept
 {
-    return UnderlineWrapped(text.c_str(), text.c_str() + text.size(), color);
+    return UnderlineWrapped(text.c_str(), text.c_str() + text.size(), colour);
 }
 
 void UImGui::TextUtils::LinkWrapped(const std::string& text, ImColor colour, const std::function<void(const char*)>& clicked) noexcept
@@ -122,55 +77,26 @@ void UImGui::TextUtils::Strikethrough(ImColor colour) noexcept
 
 UImGui::TextUtils::WidgetState UImGui::TextUtils::StrikethroughWrapped(const char* text, const char* end, ImColor colour) noexcept
 {
-    float scale = ImGui::GetIO().FontGlobalScale;
-    float widthAvail = ImGui::GetContentRegionAvail().x;
-    const char* endLine = text;
 
-    if (widthAvail > 0.0f)
-        endLine = ImGui::GetFont()->CalcWordWrapPositionA(scale, text, end, widthAvail);
-    if (endLine > text && endLine < end)
-    {
-        if (isPartOfWord(*endLine))
-        {
-            float nextLineWidth = ImGui::GetContentRegionMax().x;
-            const char* nextLineEnd = ImGui::GetFont()->CalcWordWrapPositionA(scale, text, end, nextLineWidth);
-            if (nextLineEnd == end || (nextLineEnd <= end && !isPartOfWord(*nextLineEnd)))
-                endLine = text;
-        }
-    }
-
-    ImGui::PushTextWrapPos(-1.0f);
-    ImGui::TextUnformatted(text, endLine);
-    auto bHovered = ImGui::IsItemHovered() ? UIMGUI_TEXT_UTILS_WIDGET_STATE_HOVERED : 0;
-    auto bClicked = ImGui::IsMouseClicked(ImGuiMouseButton_Left) ? UIMGUI_TEXT_UTILS_WIDGET_STATE_CLICKED : 0;
-
-    Strikethrough(colour);
-    ImGui::PopTextWrapPos();
-
-    widthAvail = ImGui::GetContentRegionAvail().x;
-    auto result = static_cast<WidgetState>(bHovered | bClicked);
-    while (endLine < end)
-    {
-        text = endLine;
-        if (*text == ' ')
-            ++text;
-        endLine = ImGui::GetFont()->CalcWordWrapPositionA(scale, text, end, widthAvail);
-        if (text == endLine)
-            endLine++;
-        ImGui::PushTextWrapPos(-1.0f);
-        ImGui::TextUnformatted(text, endLine);
-        bHovered = ImGui::IsItemHovered() ? UIMGUI_TEXT_UTILS_WIDGET_STATE_HOVERED : 0;
-        bClicked = ImGui::IsMouseClicked(ImGuiMouseButton_Left) ? UIMGUI_TEXT_UTILS_WIDGET_STATE_CLICKED : 0;
-        Strikethrough(colour);
-
-        result = static_cast<WidgetState>(result | bHovered | bClicked);
-
-        ImGui::PopTextWrapPos();
-    }
-    return result;
+    return renderWrappedTextGeneric(text, end, colour, [](ImColor color) -> void { Strikethrough(color); });
 }
 
-UImGui::TextUtils::WidgetState UImGui::TextUtils::StrikethroughWrapped(const std::string& text, ImColor color) noexcept
+UImGui::TextUtils::WidgetState UImGui::TextUtils::StrikethroughWrapped(const std::string& text, ImColor colour) noexcept
 {
-    return StrikethroughWrapped(text.c_str(), text.c_str() + text.size(), color);
+    return StrikethroughWrapped(text.c_str(), text.c_str() + text.size(), colour);
+}
+
+void UImGui::TextUtils::Highlight(ImColor colour) noexcept
+{
+    ImGui::GetWindowDrawList()->AddRectFilled(ImGui::GetItemRectMin(), ImGui::GetItemRectMax(), colour);
+}
+
+UImGui::TextUtils::WidgetState UImGui::TextUtils::HighlightWrapped(const char* text, const char* end, ImColor colour) noexcept 
+{
+    return renderWrappedTextGeneric(text, end, colour, [](ImColor color) -> void { Highlight(color); });
+}
+
+UImGui::TextUtils::WidgetState UImGui::TextUtils::HighlightWrapped(const std::string& text, ImColor colour) noexcept
+{
+    return HighlightWrapped(text.c_str(), text.c_str() + text.size(), colour);
 }
