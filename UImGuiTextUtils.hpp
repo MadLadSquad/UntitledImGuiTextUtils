@@ -88,6 +88,18 @@ namespace UImGui
         static void Subscript(const std::string& str, bool bWrap, float verticalAlignmentDivide = 1.5f) noexcept;
 
         /**
+         * @brief Renders ruby text, small text on top of a word. Commonly used for Furigana, a way of annotating
+         * Japanese Kanji. Looks like this:
+         * かん　じ
+         *  漢　 字
+         * Where the Hiragana above the kanji is rendered with the small font.
+         */
+        static void Ruby(const char* begin, const char* end) noexcept;
+
+        // C++ std::string variant of the normal ruby function
+        static void Ruby(const std::string& text) noexcept;
+
+        /**
          * @brief Renders superscript text, small text starting from the lower right corner
          * @param begin Pointer to the first element of the text array
          * @param end Pointer to the last element of the text array

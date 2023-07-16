@@ -18,6 +18,6 @@ A bunch of small utility functions to make marking down text in ImGui easier. We
 - [x] Subscript
 - [x] Superscript
 - [x] Highlighted text
-- [ ] Ruby text
+- [x] Ruby text
 - [x] Keyboard
 

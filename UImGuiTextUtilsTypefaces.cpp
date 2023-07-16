@@ -84,7 +84,7 @@ void UImGui::TextUtils::Subscript(const char* begin, const char* end, bool bWrap
     auto max = ImGui::GetItemRectMax();
 
     ImGui::GetWindowDrawList()->AddText((*getData())->small, (*getData())->small->FontSize,
-                                        ImVec2(max.x, static_cast<float>(max.y - (ImGui::GetFontSize() / verticalAlignmentDivide))),
+                                        ImVec2(max.x, static_cast<float>(max.y - ((*getData())->small->FontSize / verticalAlignmentDivide))),
                                         ImGui::ColorConvertFloat4ToU32(ImGui::GetStyle().Colors[ImGuiCol_Text]),
                                         begin, end,
                                         // If word wrapping is enabled set width to region avail - 1 character,
@@ -98,7 +98,7 @@ void UImGui::TextUtils::Superscript(const char* begin, const char* end, bool bWr
     auto min = ImGui::GetItemRectMin();
 
     ImGui::GetWindowDrawList()->AddText((*getData())->small, (*getData())->small->FontSize,
-                                        ImVec2(max.x, min.y - (ImGui::GetFontSize() / verticalAlignmentDivide)),
+                                        ImVec2(max.x, min.y - ((*getData())->small->FontSize / verticalAlignmentDivide)),
                                         ImGui::ColorConvertFloat4ToU32(ImGui::GetStyle().Colors[ImGuiCol_Text]),
                                         begin, end,
                                         // If word wrapping is enabled set width to region avail - 1 character,
@@ -114,4 +114,19 @@ void UImGui::TextUtils::Subscript(const std::string& str, bool bWrap, float vert
 void UImGui::TextUtils::Superscript(const std::string& str, bool bWrap, float verticalAlignmentDivide) noexcept
 {
     Superscript(str.c_str(), str.c_str() + str.size(), bWrap, verticalAlignmentDivide);
+}
+
+void UImGui::TextUtils::Ruby(const char* begin, const char* end) noexcept
+{
+    auto min = ImGui::GetItemRectMin();
+
+    ImGui::GetWindowDrawList()->AddText((*getData())->small, (*getData())->small->FontSize,
+                                        ImVec2(min.x, min.y - (*getData())->small->FontSize / 2),
+                                        ImGui::ColorConvertFloat4ToU32(ImGui::GetStyle().Colors[ImGuiCol_Text]),
+                                        begin, end);
+}
+
+void UImGui::TextUtils::Ruby(const std::string& text) noexcept
+{
+    Ruby(text.c_str(), text.c_str() + text.size());
 }
