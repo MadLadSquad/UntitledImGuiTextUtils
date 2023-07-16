@@ -15,6 +15,9 @@
 // The default highlight text colour, yellow with ~25% opacity
 #define UIMGUI_HIGHLIGHT_TEXT_COLOUR IM_COL32(255, 255, 0, 64)
 
+// The default colour for blockquote rectangle, gray
+#define UIMGUI_BLOCKQUOTE_TEXT_COLOUR IM_COL32(69, 71, 90, 255)
+
 namespace UImGui
 {
     struct IMGUI_API TextUtilsData
@@ -30,7 +33,7 @@ namespace UImGui
     class IMGUI_API TextUtils
     {
     public:
-        enum WidgetState
+        enum [[maybe_unused]] WidgetState
         {
             UIMGUI_TEXT_UTILS_WIDGET_STATE_NONE = 0,
             UIMGUI_TEXT_UTILS_WIDGET_STATE_CLICKED = 1 << 0,
@@ -201,6 +204,70 @@ namespace UImGui
 
         // std::string wrapper on top of HighlightWrapped
         static WidgetState HighlightWrapped(const std::string& text, ImColor colour = UIMGUI_HIGHLIGHT_TEXT_COLOUR) noexcept;
+
+        /**
+         * @brief Renders a single blockquote rectangle
+         * @param colour - Colour of the line, defaults to the current text colour, represented by the
+         * UIMGUI_HIGHLIGHT_TEXT_COLOUR macro
+         */
+        static void Blockquote(ImColor colour = UIMGUI_BLOCKQUOTE_TEXT_COLOUR) noexcept;
+
+        /**
+         * @brief Abstraction on top of ImGui::Text for blockquotes. Renders text without word wrapping
+         * @tparam Args - A templated variadic list of elements to be formatted by the format string
+         * @param fmt - The format string
+         * @param colour - Colour of the line, defaults to the current text colour, represented by the
+         * UIMGUI_HIGHLIGHT_TEXT_COLOUR macro
+         * @param args - Variadic arguments passed to ImGui::Text
+         * @return State of the text, represented using the WidgetState bitmask
+         */
+        template<typename ...Args>
+        static WidgetState Blockquote(const char* fmt, ImColor colour = UIMGUI_BLOCKQUOTE_TEXT_COLOUR, Args... args) noexcept
+        {
+            Blockquote(colour);
+            ImGui::SameLine();
+            ImGui::Text(fmt, (args)...);
+            auto bHovered = ImGui::IsItemHovered() ? UIMGUI_TEXT_UTILS_WIDGET_STATE_HOVERED : 0;
+            auto bClicked = ImGui::IsMouseClicked(ImGuiMouseButton_Left) ? UIMGUI_TEXT_UTILS_WIDGET_STATE_CLICKED : 0;
+
+            return static_cast<WidgetState>(bHovered | bClicked);
+        }
+
+        /**
+         * @brief Renders text in blockquote with word wrapping
+         * @param text - The text pointer
+         * @param end - Text pointer to the end of the text
+         * @param colour - Colour of the line, defaults to the current text colour, represented by the
+         * UIMGUI_HIGHLIGHT_TEXT_COLOUR macro
+         * @return State of the text, represented using the WidgetState bitmask
+         */
+        static WidgetState BlockquoteWrapped(const char* text, const char* end, ImColor colour = UIMGUI_BLOCKQUOTE_TEXT_COLOUR) noexcept;
+
+        // std::string wrapper on top of HighlightWrapped
+        static WidgetState BlockquoteWrapped(const std::string& text, ImColor colour = UIMGUI_BLOCKQUOTE_TEXT_COLOUR) noexcept;
+
+        /**
+         * @brief Renders text in the form of a markdown keyboard shortcut
+         * @tparam Args - A templated variadic list of elements to be formatted by the format string
+         * @param fmt - The format string
+         * @param colour - Background colour, defaults to the current text colour, represented by the
+         * UIMGUI_HIGHLIGHT_TEXT_COLOUR macro
+         * @param args - Variadic arguments passed to ImGui::Text
+         * @return State of the text, represented using the WidgetState bitmask
+         */
+        template<typename ...Args>
+        static WidgetState Keyboard(const char* fmt, ImColor colour = UIMGUI_BLOCKQUOTE_TEXT_COLOUR, Args... args) noexcept
+        {
+            ImGui::Text(fmt, (args)...);
+            ImGui::AlignTextToFramePadding();
+            auto bHovered = ImGui::IsItemHovered() ? UIMGUI_TEXT_UTILS_WIDGET_STATE_HOVERED : 0;
+            auto bClicked = ImGui::IsMouseClicked(ImGuiMouseButton_Left) ? UIMGUI_TEXT_UTILS_WIDGET_STATE_CLICKED : 0;
+
+
+            ImGui::GetForegroundDrawList()->AddRectFilled(ImGui::GetItemRectMin(), ImGui::GetItemRectMax(), colour, 1.0f);
+
+            return static_cast<WidgetState>(bHovered | bClicked);
+        }
     private:
         static void customFontGenericText(const char* fmt, ImFont* font, va_list args) noexcept;
         static void customFontGenericTextWrapped(const char* fmt, ImFont* font, va_list args) noexcept;
