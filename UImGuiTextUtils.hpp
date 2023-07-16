@@ -22,10 +22,11 @@ namespace UImGui
 {
     struct IMGUI_API TextUtilsData
     {
-        ImFont bold;
-        ImFont italic;
-        ImFont boldItalic;
-        ImFont monospace;
+        ImFont* bold;
+        ImFont* italic;
+        ImFont* boldItalic;
+        ImFont* monospace;
+        ImFont* small;
 
         std::function<void(const char*)> defaultLinkClickEvent = [](const char*) -> void {};
     };
@@ -41,25 +42,63 @@ namespace UImGui
             UIMGUI_TEXT_UTILS_WIDGET_STATE_ALL = UIMGUI_TEXT_UTILS_WIDGET_STATE_CLICKED | UIMGUI_TEXT_UTILS_WIDGET_STATE_HOVERED,
         };
 
-        static void initTextUtilsData(const TextUtilsData& data) noexcept;
+        static void initTextUtilsData(TextUtilsData* data) noexcept;
 
         // Renders bold text
         static void Bold(const char* fmt, ...) noexcept;
 
-        // Renders bold wrapped text
+        // Renders bold text with word wrapping
         static void BoldWrapped(const char* fmt, ...) noexcept;
 
         // Renders bold text
         static void Italic(const char* fmt, ...) noexcept;
 
-        // Renders bold wrapped text
+        // Renders bold text with word wrapping
         static void ItalicWrapped(const char* fmt, ...) noexcept;
 
         // Renders bold text
         static void BoldItalic(const char* fmt, ...) noexcept;
 
-        // Renders bold wrapped text
+        // Renders bold text with word wrapping
         static void BoldItalicWrapped(const char* fmt, ...) noexcept;
+
+        // Renders monospace text
+        static void Monospace(const char* fmt, ...) noexcept;
+
+        // Renders monospace text with word wrapping
+        static void MonospaceWrapped(const char* fmt, ...) noexcept;
+
+        // Renders small text
+        static void Small(const char* fmt, ...) noexcept;
+
+        // Renders small text with word wrapping
+        static void SmallWrapped(const char* fmt, ...) noexcept;
+
+        /**
+         * @brief Renders subscript text, small text starting from the lower right corner
+         * @param begin Pointer to the first element of the text array
+         * @param end Pointer to the last element of the text array
+         * @param bWrap Whether to enable word wrapping
+         * @param verticalAlignmentDivide A magic number which the vertical position of the element is divided by to
+         * achieve vertical text alignment of the text. Default is 1.5, but can be changed if needed.
+         */
+        static void Subscript(const char* begin, const char* end, bool bWrap, float verticalAlignmentDivide = 1.5f) noexcept;
+
+        // C++ std::string variant of the normal subscript function
+        static void Subscript(const std::string& str, bool bWrap, float verticalAlignmentDivide = 1.5f) noexcept;
+
+        /**
+         * @brief Renders superscript text, small text starting from the lower right corner
+         * @param begin Pointer to the first element of the text array
+         * @param end Pointer to the last element of the text array
+         * @param bWrap Whether to enable word wrapping
+         * @param verticalAlignmentDivide A magic number which the vertical position of the element is divided by to
+         * achieve vertical text alignment of the text. Default is 1.5, but can be changed if needed.
+         */
+        static void Superscript(const char* begin, const char* end, bool bWrap, float verticalAlignmentDivide = 4.0f) noexcept;
+
+        // C++ std::string variant of the normal superscript function
+        static void Superscript(const std::string& str, bool bWrap, float verticalAlignmentDivide = 4.0f) noexcept;
 
         /**
          * @brief Underlines the element above
@@ -149,7 +188,7 @@ namespace UImGui
          * @param clicked - A callback to be called if the link is clicked, defaults to TextUtilsData::defaultLinkClickEvent
          */
         static void Link(const char* text, ImColor colour = UIMGUI_LINK_TEXT_UNVISITED,
-                         const std::function<void(const char* link)>& clicked = getData().defaultLinkClickEvent) noexcept;
+                         const std::function<void(const char* link)>& clicked = (*getData())->defaultLinkClickEvent) noexcept;
 
         /**
          * @brief Renders a link with text wrapping
@@ -159,11 +198,11 @@ namespace UImGui
          * @param clicked - A callback to be called if the link is clicked, defaults to TextUtilsData::defaultLinkClickEvent
          */
         static void LinkWrapped(const char* text, const char* end, ImColor colour = UIMGUI_LINK_TEXT_UNVISITED,
-                                const std::function<void(const char* link)>& clicked = getData().defaultLinkClickEvent) noexcept;
+                                const std::function<void(const char* link)>& clicked = (*getData())->defaultLinkClickEvent) noexcept;
 
         // std::string wrapper on top of LinkWrapped
         static void LinkWrapped(const std::string& text, ImColor colour = UIMGUI_LINK_TEXT_UNVISITED,
-                                const std::function<void(const char* link)>& clicked = getData().defaultLinkClickEvent) noexcept;
+                                const std::function<void(const char* link)>& clicked = (*getData())->defaultLinkClickEvent) noexcept;
 
         /**
          * @brief Highlight the element above
@@ -273,7 +312,7 @@ namespace UImGui
         static void customFontGenericTextWrapped(const char* fmt, ImFont* font, va_list args) noexcept;
 
         static bool isPartOfWord(char character) noexcept;
-        static TextUtilsData& getData() noexcept;
+        static TextUtilsData** getData() noexcept;
 
         static WidgetState renderWrappedTextGeneric(const char* text, const char* end, ImColor colour, const std::function<void(ImColor colour)>& f) noexcept;
     };

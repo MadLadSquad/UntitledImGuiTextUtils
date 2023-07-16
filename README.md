@@ -7,15 +7,17 @@ A bunch of small utility functions to make marking down text in ImGui easier. We
 - [x] Bold
 - [x] Italic
 - [x] Bold Italic
+- [x] Monospace
+- [x] Small
 - [x] Link
 - [x] Underline
 - [x] Strikethrough
 - [ ] Blockquote
-- [ ] Inline code
+- [x] Inline code
 - [ ] Code block
-- [ ] Subscript
-- [ ] Superscript
+- [x] Subscript
+- [x] Superscript
 - [x] Highlighted text
 - [ ] Ruby text
-- [ ] Keyboard
+- [x] Keyboard
 
