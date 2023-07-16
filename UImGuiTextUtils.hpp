@@ -18,6 +18,8 @@
 // The default colour for blockquote rectangle, gray
 #define UIMGUI_BLOCKQUOTE_TEXT_COLOUR IM_COL32(69, 71, 90, 255)
 
+#define UIMGUI_TEXT_UTILS_DATA (*getData())
+
 namespace UImGui
 {
     struct IMGUI_API TextUtilsData
@@ -273,15 +275,11 @@ namespace UImGui
          * @return State of the text, represented using the WidgetState bitmask
          */
         template<typename ...Args>
-        static WidgetState Blockquote(const char* fmt, ImColor colour = UIMGUI_BLOCKQUOTE_TEXT_COLOUR, Args... args) noexcept
+        static void Blockquote(const char* fmt, ImColor colour = UIMGUI_BLOCKQUOTE_TEXT_COLOUR, Args... args) noexcept
         {
             Blockquote(colour);
             ImGui::SameLine();
             ImGui::Text(fmt, (args)...);
-            auto bHovered = ImGui::IsItemHovered() ? UIMGUI_TEXT_UTILS_WIDGET_STATE_HOVERED : 0;
-            auto bClicked = ImGui::IsMouseClicked(ImGuiMouseButton_Left) ? UIMGUI_TEXT_UTILS_WIDGET_STATE_CLICKED : 0;
-
-            return static_cast<WidgetState>(bHovered | bClicked);
         }
 
         /**
@@ -292,33 +290,47 @@ namespace UImGui
          * UIMGUI_HIGHLIGHT_TEXT_COLOUR macro
          * @return State of the text, represented using the WidgetState bitmask
          */
-        static WidgetState BlockquoteWrapped(const char* text, const char* end, ImColor colour = UIMGUI_BLOCKQUOTE_TEXT_COLOUR) noexcept;
+        static void BlockquoteWrapped(const char* text, const char* end, ImColor colour = UIMGUI_BLOCKQUOTE_TEXT_COLOUR) noexcept;
 
         // std::string wrapper on top of HighlightWrapped
-        static WidgetState BlockquoteWrapped(const std::string& text, ImColor colour = UIMGUI_BLOCKQUOTE_TEXT_COLOUR) noexcept;
+        static void BlockquoteWrapped(const std::string& text, ImColor colour = UIMGUI_BLOCKQUOTE_TEXT_COLOUR) noexcept;
 
         /**
-         * @brief Renders text in the form of a markdown keyboard shortcut
-         * @tparam Args - A templated variadic list of elements to be formatted by the format string
-         * @param fmt - The format string
-         * @param colour - Background colour, defaults to the current text colour, represented by the
-         * UIMGUI_HIGHLIGHT_TEXT_COLOUR macro
-         * @param args - Variadic arguments passed to ImGui::Text
-         * @return State of the text, represented using the WidgetState bitmask
+         * @brief Renders text code as a markdown code block
+         * @param begin - Pointer to the beginning of the string
+         * @param end - Pointer to the end of the string
+         * @param bWrapText - Whether to enable word wrapping
+         * @param backgroundColour - The background colour of the code block
          */
-        template<typename ...Args>
-        static WidgetState Keyboard(const char* fmt, ImColor colour = UIMGUI_BLOCKQUOTE_TEXT_COLOUR, Args... args) noexcept
-        {
-            ImGui::Text(fmt, (args)...);
-            ImGui::AlignTextToFramePadding();
-            auto bHovered = ImGui::IsItemHovered() ? UIMGUI_TEXT_UTILS_WIDGET_STATE_HOVERED : 0;
-            auto bClicked = ImGui::IsMouseClicked(ImGuiMouseButton_Left) ? UIMGUI_TEXT_UTILS_WIDGET_STATE_CLICKED : 0;
+        static void CodeBlock(const char* begin, const char* end, bool bWrapText,
+                                ImColor backgroundColour = UIMGUI_BLOCKQUOTE_TEXT_COLOUR) noexcept;
+
+        // C++ std::string abstraction on top of the normal CodeBlock function
+        static void CodeBlock(const std::string& text, bool bWrapText,
+                                ImColor backgroundColour = UIMGUI_BLOCKQUOTE_TEXT_COLOUR) noexcept;
 
 
-            ImGui::GetForegroundDrawList()->AddRectFilled(ImGui::GetItemRectMin(), ImGui::GetItemRectMax(), colour, 1.0f);
+        /**
+         * @brief Renders inline code
+         * @param begin - Pointer to the beginning of the string
+         * @param end - Pointer to the end of the string
+         * @param backgroundColour - The background colour of the code block
+         */
+        static void CodeInline(const char* begin, const char* end, ImColor backgroundColour = UIMGUI_BLOCKQUOTE_TEXT_COLOUR) noexcept;
 
-            return static_cast<WidgetState>(bHovered | bClicked);
-        }
+        // C++ std::string abstraction on top of the normal CodeInline function
+        static void CodeInline(const std::string& text, ImColor backgroundColour = UIMGUI_BLOCKQUOTE_TEXT_COLOUR) noexcept;
+
+        /**
+         * @brief Renders inline code with word wrapping
+         * @param begin - Pointer to the beginning of the string
+         * @param end - Pointer to the end of the string
+         * @param backgroundColour - The background colour of the code block
+         */
+        static void CodeInlineWrapped(const char* begin, const char* end, ImColor backgroundColour = UIMGUI_BLOCKQUOTE_TEXT_COLOUR) noexcept;
+
+        // C++ std::string abstraction on top of the normal CodeInlineWrapped function
+        static void CodeInlineWrapped(const std::string& text, ImColor backgroundColour = UIMGUI_BLOCKQUOTE_TEXT_COLOUR) noexcept;
     private:
         static void customFontGenericText(const char* fmt, ImFont* font, va_list args) noexcept;
         static void customFontGenericTextWrapped(const char* fmt, ImFont* font, va_list args) noexcept;
@@ -326,6 +338,8 @@ namespace UImGui
         static bool isPartOfWord(char character) noexcept;
         static TextUtilsData** getData() noexcept;
 
-        static WidgetState renderWrappedTextGeneric(const char* text, const char* end, ImColor colour, const std::function<void(ImColor colour)>& f) noexcept;
+        static WidgetState renderWrappedTextGeneric(const char* text, const char* end, ImColor colour,
+                                                    const std::function<void(ImColor)>& after,
+                                                    const std::function<void(ImColor)>& before) noexcept;
     };
 }

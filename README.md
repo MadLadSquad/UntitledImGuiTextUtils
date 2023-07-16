@@ -12,12 +12,11 @@ A bunch of small utility functions to make marking down text in ImGui easier. We
 - [x] Link
 - [x] Underline
 - [x] Strikethrough
-- [ ] Blockquote
+- [x] Blockquote
+- [x] Code blocks
 - [x] Inline code
-- [ ] Code block
 - [x] Subscript
 - [x] Superscript
 - [x] Highlighted text
 - [x] Ruby text
-- [x] Keyboard
 
