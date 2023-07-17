@@ -20,6 +20,9 @@ A bunch of small utility functions to make marking down text in ImGui easier. We
 - [x] Highlighted text
 - [x] Ruby text
 
+## Learning
+All information can be found on the [wiki](https://github.com/MadLadSquad/UntitledImGuiTextUtils/wiki).
+
 ## Showcase
 ### Easy typeface rendering
 Rendering Normal, Bold, Italic, BoldItalic and Monospace text all in 5 lines of code:
