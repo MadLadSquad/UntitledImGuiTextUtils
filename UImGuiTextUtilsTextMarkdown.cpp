@@ -247,7 +247,7 @@ void UImGui::TextUtils::CodeInline(const std::string& text, ImColor backgroundCo
     CodeInline(text.c_str(), text.c_str() + text.size(), backgroundColour);
 }
 
-UImGui::TextUtils::WidgetState UImGui::TextUtils::renderWrappedTextGeneric(const char* text, const char* end, ImColor colour, const std::function<void(ImColor)>& after, const std::function<void(ImColor)>& before) noexcept
+UImGui::TextUtils::WidgetState UImGui::TextUtils::renderWrappedTextGeneric(const char* text, const char* end, ImColor colour, const std::function<void(ImColor)>& after, const std::function<void(ImColor)>& before, const std::function<void(const char* s, const char* e, ImColor backgroundColour)>& render) noexcept
 {
     float scale = ImGui::GetIO().FontGlobalScale;
     float widthAvail = ImGui::GetContentRegionAvail().x;
@@ -268,7 +268,7 @@ UImGui::TextUtils::WidgetState UImGui::TextUtils::renderWrappedTextGeneric(const
 
     ImGui::PushTextWrapPos(-1.0f);
     before(colour);
-    ImGui::TextUnformatted(text, endLine);
+    render(text, endLine, colour);
 
     auto bHovered = ImGui::IsItemHovered() ? UIMGUI_TEXT_UTILS_WIDGET_STATE_HOVERED : 0;
     auto bClicked = ImGui::IsMouseClicked(ImGuiMouseButton_Left) ? UIMGUI_TEXT_UTILS_WIDGET_STATE_CLICKED : 0;
@@ -288,7 +288,7 @@ UImGui::TextUtils::WidgetState UImGui::TextUtils::renderWrappedTextGeneric(const
             endLine++;
         ImGui::PushTextWrapPos(-1.0f);
         before(colour);
-        ImGui::TextUnformatted(text, endLine);
+        render(text, endLine, colour);
 
         bHovered = ImGui::IsItemHovered() ? UIMGUI_TEXT_UTILS_WIDGET_STATE_HOVERED : 0;
         bClicked = ImGui::IsMouseClicked(ImGuiMouseButton_Left) ? UIMGUI_TEXT_UTILS_WIDGET_STATE_CLICKED : 0;

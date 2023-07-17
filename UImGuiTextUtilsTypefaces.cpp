@@ -4,15 +4,15 @@
 // - Ruby, superscript, subscript
 #include "UImGuiTextUtils.hpp"
 
-#define CUSTOM_FONT_BOILERPLATE(x, y) va_list args;     \
-va_start(args, x);                                      \
-customFontGenericText(fmt, UIMGUI_TEXT_UTILS_DATA->y, args);      \
+#define CUSTOM_FONT_BOILERPLATE(x, y) va_list args;             \
+va_start(args, x);                                              \
+customFontGenericText(fmt, UIMGUI_TEXT_UTILS_DATA->y, args);    \
 va_end(args)
 
 
-#define CUSTOM_FONT_BOILERPLATE_WRAPPED(x, y) va_list args;     \
-va_start(args, x);                                              \
-customFontGenericTextWrapped(fmt, UIMGUI_TEXT_UTILS_DATA->y, args);       \
+#define CUSTOM_FONT_BOILERPLATE_WRAPPED(x, y) va_list args;         \
+va_start(args, x);                                                  \
+customFontGenericTextWrapped(fmt, UIMGUI_TEXT_UTILS_DATA->y, args); \
 va_end(args)
 
 void UImGui::TextUtils::Bold(const char* fmt, ...) noexcept
@@ -79,94 +79,86 @@ void UImGui::TextUtils::customFontGenericTextWrapped(const char* fmt, ImFont* fo
     ImGui::PopFont();
 }
 
-void UImGui::TextUtils::Subscript(const char* begin, const char* end, bool bWrap, float verticalAlignmentDivide) noexcept
+void UImGui::TextUtils::Ruby(const char* textBegin, const char* textEnd, const char* annotationBegin, const char* annotationEnd, bool bWrapAnnotation, bool bWrapText) noexcept
 {
-    //auto max = ImGui::GetItemRectMax();
-    //// If word wrapping is enabled set width to region avail - 1 character,
-    //// otherwise use the existing default argument
-    //auto width = bWrap ? ImGui::GetContentRegionAvail().x - ImGui::GetFontSize() : 0.0f;
-    //auto textSize = ImGui::CalcTextSize(begin, end, false, width);
-//
-    //ImGui::GetWindowDrawList()->AddText(UIMGUI_TEXT_UTILS_DATA->small, UIMGUI_TEXT_UTILS_DATA->small->FontSize,
-    //                                    ImVec2(max.x, static_cast<float>(max.y - (UIMGUI_TEXT_UTILS_DATA->small->FontSize / verticalAlignmentDivide))),
-    //                                    ImGui::ColorConvertFloat4ToU32(ImGui::GetStyle().Colors[ImGuiCol_Text]),
-    //                                    begin, end, width);
-    //ImGui::SetCursorScreenPos({ max.x + textSize.x, max.y });
+    static float width = 0.0f;
 
-    float wrapWidth = bWrap ? ImGui::GetContentRegionAvail().x : -1.0f;
+    ImGui::BeginGroup();
+    auto offset = (UIMGUI_TEXT_UTILS_DATA->small->FontSize / 2);
 
-    // Get the font size
-    auto textSize = UIMGUI_TEXT_UTILS_DATA->small->CalcTextSizeA(UIMGUI_TEXT_UTILS_DATA->small->FontSize, FLT_MAX, wrapWidth, begin, end);
+    // Render
+    {
+        auto min = ImGui::GetCursorScreenPos();
+        min.y -= offset;
 
-    auto itemRectMax = ImGui::GetItemRectMax();
+        auto textSize = UIMGUI_TEXT_UTILS_DATA->small->CalcTextSizeA(UIMGUI_TEXT_UTILS_DATA->small->FontSize, FLT_MAX, width, annotationBegin, annotationEnd);
 
-    // Calculate rect size and coordinates
-    ImVec2 min = ImGui::GetItemRectMin();
-    ImVec2 max = { min.x + textSize.x, min.y + itemRectMax.y };
-    ImVec2 size = {max.x - min.x, max.y - min.y };
+        ImVec2 max = { min.x + textSize.x, min.y + textSize.y };
+        ImVec2 size = {max.x - min.x, max.y - min.y };
+        ImGui::GetWindowDrawList()->AddText(UIMGUI_TEXT_UTILS_DATA->small, UIMGUI_TEXT_UTILS_DATA->small->FontSize, min,
+                                            ImGui::ColorConvertFloat4ToU32(ImGui::GetStyle().Colors[ImGuiCol_Text]),
+                                            annotationBegin, annotationEnd, width);
+        // Render an invisible button, which will act as our element
+        ImGui::InvisibleButton("##rubyannotation", size);
+    }
+    {
+        auto min = ImGui::GetItemRectMin();
+        min.y += offset;
 
-    ImGui::GetWindowDrawList()->AddText(UIMGUI_TEXT_UTILS_DATA->small, UIMGUI_TEXT_UTILS_DATA->small->FontSize, max,
-                                        ImGui::ColorConvertFloat4ToU32(ImGui::GetStyle().Colors[ImGuiCol_Text]),
-                                        begin, end, wrapWidth);
+        auto textSize = ImGui::CalcTextSize(textBegin, textEnd, false, bWrapText ? ImGui::GetContentRegionAvail().x : -1.0f);
+        width = bWrapAnnotation ? std::min(textSize.x, ImGui::GetContentRegionAvail().x) : -1.0f;
 
-    // Render an invisible button, which will act as our element
-    ImGui::InvisibleButton("##subscript", size);
+        ImVec2 max = { min.x + textSize.x, min.y + textSize.y };
+        ImVec2 size = {max.x - min.x, max.y - min.y };
+        ImGui::GetWindowDrawList()->AddText(ImGui::GetFont(), ImGui::GetFont()->FontSize, min,
+                                            ImGui::ColorConvertFloat4ToU32(ImGui::GetStyle().Colors[ImGuiCol_Text]),
+                                            textBegin, textEnd, width);
+        // Render an invisible button, which will act as our element
+        ImGui::InvisibleButton("##ruby", size);
+    }
+    ImGui::EndGroup();
 }
 
-void UImGui::TextUtils::Superscript(const char* begin, const char* end, bool bWrap, float verticalAlignmentDivide) noexcept
+void UImGui::TextUtils::Ruby(const std::string& text, const std::string& annotation, bool bWrapAnnotation, bool bWrapText) noexcept
 {
-    //auto max = ImGui::GetItemRectMax();
-    //auto min = ImGui::GetItemRectMin();
-//
-    //// If word wrapping is enabled set width to region avail - 1 character,
-    //// otherwise use the existing default argument
-    //auto width = bWrap ? ImGui::GetContentRegionAvail().x - ImGui::GetFontSize() : 0.0f;
-    //auto textSize = ImGui::CalcTextSize(begin, end, false, width);
-//
-    //ImGui::GetWindowDrawList()->AddText(UIMGUI_TEXT_UTILS_DATA->small, UIMGUI_TEXT_UTILS_DATA->small->FontSize,
-    //                                    ImVec2(max.x, min.y - (UIMGUI_TEXT_UTILS_DATA->small->FontSize / verticalAlignmentDivide)),
-    //                                    ImGui::ColorConvertFloat4ToU32(ImGui::GetStyle().Colors[ImGuiCol_Text]),
-    //                                    begin, end,width);
-    //ImGui::SetCursorScreenPos({ max.x + textSize.x, min.y });
-    float wrapWidth = bWrap ? ImGui::GetContentRegionAvail().x : -1.0f;
+    Ruby(text.c_str(), text.c_str() + text.size(), annotation.c_str(), annotation.c_str() + annotation.size(), bWrapAnnotation, bWrapText);
+}
 
-    // Get the font size
-    auto textSize = UIMGUI_TEXT_UTILS_DATA->small->CalcTextSizeA(UIMGUI_TEXT_UTILS_DATA->small->FontSize, FLT_MAX, wrapWidth, begin, end);
+void UImGui::TextUtils::SubSuperscript(const std::string& subscript, const std::string& superscript) noexcept
+{
+    SubSuperscript(subscript.c_str(), subscript.c_str() + subscript.size(),
+                   superscript.c_str(), superscript.c_str() + superscript.size());
+}
 
-    // Calculate rect size and coordinates
+void UImGui::TextUtils::SubSuperscript(const char* subscriptBegin, const char* subscriptEnd,
+                                       const char* superscriptBegin, const char* superscriptEnd) noexcept
+{
+    auto offset = (UIMGUI_TEXT_UTILS_DATA->small->FontSize / 2);
+
+    auto superscriptTextSize = UIMGUI_TEXT_UTILS_DATA->small->CalcTextSizeA(UIMGUI_TEXT_UTILS_DATA->small->FontSize, FLT_MAX,
+                                                                            -1.0f, superscriptBegin, superscriptEnd);
+    auto subscriptTextSize = UIMGUI_TEXT_UTILS_DATA->small->CalcTextSizeA(UIMGUI_TEXT_UTILS_DATA->small->FontSize, FLT_MAX,
+                                                                            -1.0f, subscriptBegin, subscriptEnd);
     ImVec2 min = ImGui::GetCursorScreenPos();
-    ImVec2 max = { min.x + textSize.x, min.y + textSize.y + ImGui::GetStyle().FramePadding.y };
-    ImVec2 size = {max.x - min.x, max.y - min.y };
+    min.y -= offset;
+    {
 
-    ImGui::GetWindowDrawList()->AddText(UIMGUI_TEXT_UTILS_DATA->small, UIMGUI_TEXT_UTILS_DATA->small->FontSize, { max.x, min.y },
-                                        ImGui::ColorConvertFloat4ToU32(ImGui::GetStyle().Colors[ImGuiCol_Text]),
-                                        begin, end, wrapWidth);
+        ImVec2 max = { min.x + superscriptTextSize.x, min.y + superscriptTextSize.y + ImGui::GetStyle().FramePadding.y - offset };
+        ImVec2 size = { max.x - min.x, max.y - min.y };
+        ImGui::GetWindowDrawList()->AddText(UIMGUI_TEXT_UTILS_DATA->small, UIMGUI_TEXT_UTILS_DATA->small->FontSize, min,
+                                            ImGui::ColorConvertFloat4ToU32(ImGui::GetStyle().Colors[ImGuiCol_Text]),
+                                            superscriptBegin, superscriptEnd, -1.0f);
 
-    // Render an invisible button, which will act as our element
-    ImGui::InvisibleButton("##superscript", size);
-}
+        ImGui::InvisibleButton("##superscript", size);
+    }
+    ImGui::SameLine();
+    {
+        ImVec2 max = { min.x + subscriptTextSize.x, min.y + subscriptTextSize.y + ImGui::GetStyle().FramePadding.y - offset };
+        ImVec2 size = { max.x - min.x, max.y - min.y };
+        ImGui::GetWindowDrawList()->AddText(UIMGUI_TEXT_UTILS_DATA->small, UIMGUI_TEXT_UTILS_DATA->small->FontSize, { min.x, max.y },
+                                            ImGui::ColorConvertFloat4ToU32(ImGui::GetStyle().Colors[ImGuiCol_Text]),
+                                            subscriptBegin, subscriptEnd, -1.0f);
 
-void UImGui::TextUtils::Subscript(const std::string& str, bool bWrap, float verticalAlignmentDivide) noexcept
-{
-    Subscript(str.c_str(), str.c_str() + str.size(), bWrap, verticalAlignmentDivide);
-}
-
-void UImGui::TextUtils::Superscript(const std::string& str, bool bWrap, float verticalAlignmentDivide) noexcept
-{
-    Superscript(str.c_str(), str.c_str() + str.size(), bWrap, verticalAlignmentDivide);
-}
-
-void UImGui::TextUtils::Ruby(const char* begin, const char* end) noexcept
-{
-    auto min = ImGui::GetItemRectMin();
-
-    ImGui::GetWindowDrawList()->AddText(UIMGUI_TEXT_UTILS_DATA->small, UIMGUI_TEXT_UTILS_DATA->small->FontSize,
-                                        ImVec2(min.x, min.y - UIMGUI_TEXT_UTILS_DATA->small->FontSize / 2),
-                                        ImGui::ColorConvertFloat4ToU32(ImGui::GetStyle().Colors[ImGuiCol_Text]),
-                                        begin, end);
-}
-
-void UImGui::TextUtils::Ruby(const std::string& text) noexcept
-{
-    Ruby(text.c_str(), text.c_str() + text.size());
+        ImGui::InvisibleButton("##subscript", size);
+    }
 }

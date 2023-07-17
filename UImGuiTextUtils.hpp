@@ -77,17 +77,23 @@ namespace UImGui
         static void SmallWrapped(const char* fmt, ...) noexcept;
 
         /**
-         * @brief Renders subscript text, small text starting from the lower right corner
-         * @param begin Pointer to the first element of the text array
-         * @param end Pointer to the last element of the text array
-         * @param bWrap Whether to enable word wrapping
-         * @param verticalAlignmentDivide A magic number which the vertical position of the element is divided by to
-         * achieve vertical text alignment of the text. Default is 1.5, but can be changed if needed.
+         * @brief Renders superscript and subscript characters in 1 function. This is because it's hard to render both
+         * due to coordinate shifts, which is needed if we want to e.g. render mathematical syntax for
+         * combinations, which looks like this:
+         *  n
+         * C
+         *  k
+         * Setting either text blocks as an empty string will not render it.
+         * @param subscriptBegin Pointer to the first element of the subscript text array
+         * @param subscriptEnd Pointer to the last element of the subscript text array
+         * @param superscriptBegin Pointer to the first element of the superscript text array
+         * @param superscriptEnd Pointer to the last element of the superscript text array
          */
-        static void Subscript(const char* begin, const char* end, bool bWrap, float verticalAlignmentDivide = 1.5f) noexcept;
+        static void SubSuperscript(const char* subscriptBegin, const char* subscriptEnd,
+                                   const char* superscriptBegin, const char* superscriptEnd) noexcept;
 
-        // C++ std::string variant of the normal subscript function
-        static void Subscript(const std::string& str, bool bWrap, float verticalAlignmentDivide = 1.5f) noexcept;
+        // C++ std::string variant of the normal SubSuperscript function
+        static void SubSuperscript(const std::string& subscript, const std::string& superscript) noexcept;
 
         /**
          * @brief Renders ruby text, small text on top of a word. Commonly used for Furigana, a way of annotating
@@ -95,24 +101,20 @@ namespace UImGui
          * かん　じ
          *  漢　 字
          * Where the Hiragana above the kanji is rendered with the small font.
+         * @param textBegin - Pointer to the start of the main text string, 漢字 in our example
+         * @param textEnd - Pointer to the end of the main text string, 漢字 in our example
+         * @param annotationBegin - Pointer to the start of the main annotation text string, かんじ in our example
+         * @param annotationEnd - Pointer to the end of the main annotation text string, かんじ in our example
+         * @param bWrapAnnotation - Whether to apply word wrapping to the annotation text, かんじ in our example
+         * @param bWrapText - Whether to apply word wrapping to the main text, 漢字 in our example
          */
-        static void Ruby(const char* begin, const char* end) noexcept;
+        static void Ruby(const char* textBegin, const char* textEnd,
+                         const char* annotationBegin, const char* annotationEnd,
+                         bool bWrapAnnotation = true, bool bWrapText = false) noexcept;
 
-        // C++ std::string variant of the normal ruby function
-        static void Ruby(const std::string& text) noexcept;
-
-        /**
-         * @brief Renders superscript text, small text starting from the lower right corner
-         * @param begin Pointer to the first element of the text array
-         * @param end Pointer to the last element of the text array
-         * @param bWrap Whether to enable word wrapping
-         * @param verticalAlignmentDivide A magic number which the vertical position of the element is divided by to
-         * achieve vertical text alignment of the text. Default is 1.5, but can be changed if needed.
-         */
-        static void Superscript(const char* begin, const char* end, bool bWrap, float verticalAlignmentDivide = 4.0f) noexcept;
-
-        // C++ std::string variant of the normal superscript function
-        static void Superscript(const std::string& str, bool bWrap, float verticalAlignmentDivide = 4.0f) noexcept;
+        // C++ std::string version of the normal Ruby function
+        static void Ruby(const std::string& text, const std::string& annotation,
+                         bool bWrapAnnotation = true, bool bWrapText = false) noexcept;
 
         /**
          * @brief Underlines the element above
@@ -220,7 +222,7 @@ namespace UImGui
 
         /**
          * @brief Highlight the element above
-         * @param colour - Colour of the line, defaults to the current text colour, represented by the
+         * @param colour - Colour of the highlight, defaults to the default highlight text colour, represented by the
          * UIMGUI_HIGHLIGHT_TEXT_COLOUR macro
          */
         static void Highlight(ImColor colour = UIMGUI_HIGHLIGHT_TEXT_COLOUR) noexcept;
@@ -229,7 +231,7 @@ namespace UImGui
          * @brief Abstraction on top of ImGui::Text for highlighted text. Renders highlighted text without word wrapping
          * @tparam Args - A templated variadic list of elements to be formatted by the format string
          * @param fmt - The format string
-         * @param colour - Colour of the line, defaults to the current text colour, represented by the
+         * @param colour - Colour of the highlight, defaults to the default highlight text colour, represented by the
          * UIMGUI_HIGHLIGHT_TEXT_COLOUR macro
          * @param args - Variadic arguments passed to ImGui::Text
          * @return State of the text, represented using the WidgetState bitmask
@@ -249,7 +251,7 @@ namespace UImGui
          * @brief Renders highlighted text with word wrapping
          * @param text - The text pointer
          * @param end - Text pointer to the end of the text
-         * @param colour - Colour of the line, defaults to the current text colour, represented by the
+         * @param colour - Colour of the highlight, defaults to the default highlight text colour, represented by the
          * UIMGUI_HIGHLIGHT_TEXT_COLOUR macro
          * @return State of the text, represented using the WidgetState bitmask
          */
@@ -260,8 +262,8 @@ namespace UImGui
 
         /**
          * @brief Renders a single blockquote rectangle
-         * @param colour - Colour of the line, defaults to the current text colour, represented by the
-         * UIMGUI_HIGHLIGHT_TEXT_COLOUR macro
+         * @param colour - Colour of the blockquote, defaults to the default blockquote colour, represented by the
+         * UIMGUI_BLOCKQUOTE_TEXT_COLOUR macro
          */
         static void Blockquote(ImColor colour = UIMGUI_BLOCKQUOTE_TEXT_COLOUR) noexcept;
 
@@ -269,10 +271,9 @@ namespace UImGui
          * @brief Abstraction on top of ImGui::Text for blockquotes. Renders text without word wrapping
          * @tparam Args - A templated variadic list of elements to be formatted by the format string
          * @param fmt - The format string
-         * @param colour - Colour of the line, defaults to the current text colour, represented by the
-         * UIMGUI_HIGHLIGHT_TEXT_COLOUR macro
+         * @param colour - Colour of the blockquote, defaults to the default blockquote colour, represented by the
+         * UIMGUI_BLOCKQUOTE_TEXT_COLOUR macro
          * @param args - Variadic arguments passed to ImGui::Text
-         * @return State of the text, represented using the WidgetState bitmask
          */
         template<typename ...Args>
         static void Blockquote(const char* fmt, ImColor colour = UIMGUI_BLOCKQUOTE_TEXT_COLOUR, Args... args) noexcept
@@ -286,9 +287,8 @@ namespace UImGui
          * @brief Renders text in blockquote with word wrapping
          * @param text - The text pointer
          * @param end - Text pointer to the end of the text
-         * @param colour - Colour of the line, defaults to the current text colour, represented by the
-         * UIMGUI_HIGHLIGHT_TEXT_COLOUR macro
-         * @return State of the text, represented using the WidgetState bitmask
+         * @param colour - Colour of the blockquote, defaults to the default blockquote colour, represented by the
+         * UIMGUI_BLOCKQUOTE_TEXT_COLOUR macro
          */
         static void BlockquoteWrapped(const char* text, const char* end, ImColor colour = UIMGUI_BLOCKQUOTE_TEXT_COLOUR) noexcept;
 
@@ -300,7 +300,7 @@ namespace UImGui
          * @param begin - Pointer to the beginning of the string
          * @param end - Pointer to the end of the string
          * @param bWrapText - Whether to enable word wrapping
-         * @param backgroundColour - The background colour of the code block
+         * @param backgroundColour - The background colour of the code block, defaults to UIMGUI_BLOCKQUOTE_TEXT_COLOUR
          */
         static void CodeBlock(const char* begin, const char* end, bool bWrapText,
                                 ImColor backgroundColour = UIMGUI_BLOCKQUOTE_TEXT_COLOUR) noexcept;
@@ -314,7 +314,7 @@ namespace UImGui
          * @brief Renders inline code
          * @param begin - Pointer to the beginning of the string
          * @param end - Pointer to the end of the string
-         * @param backgroundColour - The background colour of the code block
+         * @param backgroundColour - The background colour of the code block, defaults to UIMGUI_BLOCKQUOTE_TEXT_COLOUR
          */
         static void CodeInline(const char* begin, const char* end, ImColor backgroundColour = UIMGUI_BLOCKQUOTE_TEXT_COLOUR) noexcept;
 
@@ -325,7 +325,7 @@ namespace UImGui
          * @brief Renders inline code with word wrapping
          * @param begin - Pointer to the beginning of the string
          * @param end - Pointer to the end of the string
-         * @param backgroundColour - The background colour of the code block
+         * @param backgroundColour - The background colour of the code block, defaults to UIMGUI_BLOCKQUOTE_TEXT_COLOUR
          */
         static void CodeInlineWrapped(const char* begin, const char* end, ImColor backgroundColour = UIMGUI_BLOCKQUOTE_TEXT_COLOUR) noexcept;
 
@@ -340,6 +340,10 @@ namespace UImGui
 
         static WidgetState renderWrappedTextGeneric(const char* text, const char* end, ImColor colour,
                                                     const std::function<void(ImColor)>& after,
-                                                    const std::function<void(ImColor)>& before) noexcept;
+                                                    const std::function<void(ImColor)>& before,
+                                                    const std::function<void(const char* s, const char* e, ImColor backgroundColour)>& render =
+                                                            [](const char* s, const char* e, ImColor) -> void {
+                                                                ImGui::TextUnformatted(s, e);
+                                                            }) noexcept;
     };
 }
