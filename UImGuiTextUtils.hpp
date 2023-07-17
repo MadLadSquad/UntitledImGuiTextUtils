@@ -1,4 +1,9 @@
 #pragma once
+#ifdef __has_include
+    #if !__has_include(<imgui.h>)
+        #error "Couldn't find imgui.h in the header include path, please add it to the path!"
+    #endif // !<imgui.h>
+#endif
 #include <imgui.h>
 #include <functional>
 #include <string>
@@ -341,8 +346,8 @@ namespace UImGui
         static WidgetState renderWrappedTextGeneric(const char* text, const char* end, ImColor colour,
                                                     const std::function<void(ImColor)>& after,
                                                     const std::function<void(ImColor)>& before,
-                                                    const std::function<void(const char* s, const char* e, ImColor backgroundColour)>& render =
-                                                            [](const char* s, const char* e, ImColor) -> void {
+                                                    const std::function<void(UImGui::TextUtilsData* data, const char* s, const char* e, ImColor backgroundColour)>& render =
+                                                            [](UImGui::TextUtilsData* data, const char* s, const char* e, ImColor) -> void {
                                                                 ImGui::TextUnformatted(s, e);
                                                             }) noexcept;
     };

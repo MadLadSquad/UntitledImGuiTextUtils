@@ -160,7 +160,9 @@ void UImGui::TextUtils::CodeBlock(const std::string& text, bool bWrapText, ImCol
 
 void UImGui::TextUtils::CodeInlineWrapped(const char* begin, const char* end, ImColor backgroundColour) noexcept
 {
-    auto f = [](UImGui::TextUtilsData* data, const char* s, const char* e, ImColor backgroundColour) -> void {
+    renderWrappedTextGeneric(begin, end, backgroundColour,
+                             [](ImColor) -> void {}, [](ImColor) -> void {}, [](UImGui::TextUtilsData* data, const char* s, const char* e, ImColor colour) -> void
+    {
         // Get the font size
         auto textSize = data->monospace->CalcTextSizeA(data->monospace->FontSize, FLT_MAX, -1.0f, s, e);
 
@@ -170,51 +172,14 @@ void UImGui::TextUtils::CodeInlineWrapped(const char* begin, const char* end, Im
         ImVec2 size = {max.x - min.x, max.y - min.y };
 
         // Add rectangle with min, max and the colour
-        ImGui::GetWindowDrawList()->AddRectFilled(min, max, backgroundColour);
+        ImGui::GetWindowDrawList()->AddRectFilled(min, max, colour);
         ImGui::GetWindowDrawList()->AddText(data->monospace, data->monospace->FontSize,min,
                                             ImGui::ColorConvertFloat4ToU32(ImGui::GetStyle().Colors[ImGuiCol_Text]),
                                             s, e, -1.0f);
 
         // Render an invisible button, which will act as our element
         ImGui::InvisibleButton("##code", size);
-    };
-
-    float scale = ImGui::GetIO().FontGlobalScale;
-    float widthAvail = ImGui::GetContentRegionAvail().x;
-    const char* endLine = begin;
-
-    if (widthAvail > 0.0f)
-        endLine = ImGui::GetFont()->CalcWordWrapPositionA(scale, begin, end, widthAvail);
-    if (endLine > begin && endLine < end)
-    {
-        if (isPartOfWord(*endLine))
-        {
-            float nextLineWidth = ImGui::GetContentRegionMax().x;
-            const char* nextLineEnd = ImGui::GetFont()->CalcWordWrapPositionA(scale, begin, end, nextLineWidth);
-            if (nextLineEnd == end || (nextLineEnd <= end && !isPartOfWord(*nextLineEnd)))
-                endLine = begin;
-        }
-    }
-
-    ImGui::PushTextWrapPos(-1.0f);
-    f(UIMGUI_TEXT_UTILS_DATA, begin, endLine, backgroundColour);
-
-    ImGui::PopTextWrapPos();
-
-    widthAvail = ImGui::GetContentRegionAvail().x;
-    while (endLine < end)
-    {
-        begin = endLine;
-        if (*begin == ' ')
-            ++begin;
-        endLine = ImGui::GetFont()->CalcWordWrapPositionA(scale, begin, end, widthAvail);
-        if (begin == endLine)
-            endLine++;
-        ImGui::PushTextWrapPos(-1.0f);
-        f(UIMGUI_TEXT_UTILS_DATA, begin, endLine, backgroundColour);
-
-        ImGui::PopTextWrapPos();
-    }
+    });
 }
 
 void UImGui::TextUtils::CodeInlineWrapped(const std::string& text, ImColor backgroundColour) noexcept
@@ -247,7 +212,12 @@ void UImGui::TextUtils::CodeInline(const std::string& text, ImColor backgroundCo
     CodeInline(text.c_str(), text.c_str() + text.size(), backgroundColour);
 }
 
-UImGui::TextUtils::WidgetState UImGui::TextUtils::renderWrappedTextGeneric(const char* text, const char* end, ImColor colour, const std::function<void(ImColor)>& after, const std::function<void(ImColor)>& before, const std::function<void(const char* s, const char* e, ImColor backgroundColour)>& render) noexcept
+UImGui::TextUtils::WidgetState UImGui::TextUtils::renderWrappedTextGeneric(const char* text, const char* end, ImColor colour,
+                                                                           const std::function<void(ImColor)>& after,
+                                                                           const std::function<void(ImColor)>& before,
+                                                                           const std::function<void(UImGui::TextUtilsData*,
+                                                                                                    const char*, const char*,
+                                                                                                    ImColor)>& render) noexcept
 {
     float scale = ImGui::GetIO().FontGlobalScale;
     float widthAvail = ImGui::GetContentRegionAvail().x;
@@ -268,7 +238,7 @@ UImGui::TextUtils::WidgetState UImGui::TextUtils::renderWrappedTextGeneric(const
 
     ImGui::PushTextWrapPos(-1.0f);
     before(colour);
-    render(text, endLine, colour);
+    render(*getData(), text, endLine, colour);
 
     auto bHovered = ImGui::IsItemHovered() ? UIMGUI_TEXT_UTILS_WIDGET_STATE_HOVERED : 0;
     auto bClicked = ImGui::IsMouseClicked(ImGuiMouseButton_Left) ? UIMGUI_TEXT_UTILS_WIDGET_STATE_CLICKED : 0;
@@ -288,7 +258,7 @@ UImGui::TextUtils::WidgetState UImGui::TextUtils::renderWrappedTextGeneric(const
             endLine++;
         ImGui::PushTextWrapPos(-1.0f);
         before(colour);
-        render(text, endLine, colour);
+        render(*getData(), text, endLine, colour);
 
         bHovered = ImGui::IsItemHovered() ? UIMGUI_TEXT_UTILS_WIDGET_STATE_HOVERED : 0;
         bClicked = ImGui::IsMouseClicked(ImGuiMouseButton_Left) ? UIMGUI_TEXT_UTILS_WIDGET_STATE_CLICKED : 0;
