@@ -6,7 +6,7 @@
 #endif
 #include <imgui.h>
 #include <functional>
-#include <string>
+#include "UImGuiString.hpp"
 
 // To shorten things somewhat
 #define UIMGUI_TEXT_COLOUR ImGui::GetStyle().Colors[ImGuiCol_Text]
@@ -97,9 +97,10 @@ namespace UImGui
         static void SubSuperscript(const char* subscriptBegin, const char* subscriptEnd,
                                    const char* superscriptBegin, const char* superscriptEnd) noexcept;
 
-        // C++ std::string variant of the normal SubSuperscript function
-        static void SubSuperscript(const std::string& subscript, const std::string& superscript) noexcept;
-
+#ifdef UIMGUI_TEXT_UTILS_STRING
+        // C++ TString variant of the normal SubSuperscript function
+        static void SubSuperscript(const TString& subscript, const TString& superscript) noexcept;
+#endif
         /**
          * @brief Renders ruby text, small text on top of a word. Commonly used for Furigana, a way of annotating
          * Japanese Kanji. Looks like this:
@@ -117,9 +118,11 @@ namespace UImGui
                          const char* annotationBegin, const char* annotationEnd,
                          bool bWrapAnnotation = true, bool bWrapText = false) noexcept;
 
-        // C++ std::string version of the normal Ruby function
-        static void Ruby(const std::string& text, const std::string& annotation,
+#ifdef UIMGUI_TEXT_UTILS_STRING
+        // C++ TString version of the normal Ruby function
+        static void Ruby(const TString& text, const TString& annotation,
                          bool bWrapAnnotation = true, bool bWrapText = false) noexcept;
+#endif
 
         /**
          * @brief Underlines the element above
@@ -158,8 +161,10 @@ namespace UImGui
          */
         static WidgetState UnderlineWrapped(const char* text, const char* end, ImColor colour = UIMGUI_TEXT_COLOUR) noexcept;
 
-        // std::string wrapper on top of UnderlineWrapped
-        static WidgetState UnderlineWrapped(const std::string& text, ImColor colour = UIMGUI_TEXT_COLOUR) noexcept;
+#ifdef UIMGUI_TEXT_UTILS_STRING
+        // TString wrapper on top of UnderlineWrapped
+        static WidgetState UnderlineWrapped(const TString& text, ImColor colour = UIMGUI_TEXT_COLOUR) noexcept;
+#endif
 
         /**
          * @brief Cross out the element above
@@ -198,8 +203,10 @@ namespace UImGui
          */
         static WidgetState StrikethroughWrapped(const char* text, const char* end, ImColor colour = UIMGUI_TEXT_COLOUR) noexcept;
 
-        // std::string wrapper on top of StrikethroughWrapped
-        static WidgetState StrikethroughWrapped(const std::string& text, ImColor colour = UIMGUI_TEXT_COLOUR) noexcept;
+#ifdef UIMGUI_TEXT_UTILS_STRING
+        // TString wrapper on top of StrikethroughWrapped
+        static WidgetState StrikethroughWrapped(const TString& text, ImColor colour = UIMGUI_TEXT_COLOUR) noexcept;
+#endif
 
 
         /**
@@ -221,9 +228,11 @@ namespace UImGui
         static void LinkWrapped(const char* text, const char* end, ImColor colour = UIMGUI_LINK_TEXT_UNVISITED,
                                 const std::function<void(const char* link)>& clicked = (*getData())->defaultLinkClickEvent) noexcept;
 
-        // std::string wrapper on top of LinkWrapped
-        static void LinkWrapped(const std::string& text, ImColor colour = UIMGUI_LINK_TEXT_UNVISITED,
+#ifdef UIMGUI_TEXT_UTILS_STRING
+        // TString wrapper on top of LinkWrapped
+        static void LinkWrapped(const TString& text, ImColor colour = UIMGUI_LINK_TEXT_UNVISITED,
                                 const std::function<void(const char* link)>& clicked = (*getData())->defaultLinkClickEvent) noexcept;
+#endif
 
         /**
          * @brief Highlight the element above
@@ -262,8 +271,10 @@ namespace UImGui
          */
         static WidgetState HighlightWrapped(const char* text, const char* end, ImColor colour = UIMGUI_HIGHLIGHT_TEXT_COLOUR) noexcept;
 
-        // std::string wrapper on top of HighlightWrapped
-        static WidgetState HighlightWrapped(const std::string& text, ImColor colour = UIMGUI_HIGHLIGHT_TEXT_COLOUR) noexcept;
+#ifdef UIMGUI_TEXT_UTILS_STRING
+        // TString wrapper on top of HighlightWrapped
+        static WidgetState HighlightWrapped(const TString& text, ImColor colour = UIMGUI_HIGHLIGHT_TEXT_COLOUR) noexcept;
+#endif
 
         /**
          * @brief Renders a single blockquote rectangle
@@ -297,8 +308,10 @@ namespace UImGui
          */
         static void BlockquoteWrapped(const char* text, const char* end, ImColor colour = UIMGUI_BLOCKQUOTE_TEXT_COLOUR) noexcept;
 
-        // std::string wrapper on top of HighlightWrapped
-        static void BlockquoteWrapped(const std::string& text, ImColor colour = UIMGUI_BLOCKQUOTE_TEXT_COLOUR) noexcept;
+#ifdef UIMGUI_TEXT_UTILS_STRING
+        // TString wrapper on top of HighlightWrapped
+        static void BlockquoteWrapped(const TString& text, ImColor colour = UIMGUI_BLOCKQUOTE_TEXT_COLOUR) noexcept;
+#endif
 
         /**
          * @brief Renders text code as a markdown code block
@@ -310,9 +323,11 @@ namespace UImGui
         static void CodeBlock(const char* begin, const char* end, bool bWrapText,
                                 ImColor backgroundColour = UIMGUI_BLOCKQUOTE_TEXT_COLOUR) noexcept;
 
-        // C++ std::string abstraction on top of the normal CodeBlock function
-        static void CodeBlock(const std::string& text, bool bWrapText,
+#ifdef UIMGUI_TEXT_UTILS_STRING
+        // C++ TString abstraction on top of the normal CodeBlock function
+        static void CodeBlock(const TString& text, bool bWrapText,
                                 ImColor backgroundColour = UIMGUI_BLOCKQUOTE_TEXT_COLOUR) noexcept;
+#endif
 
 
         /**
@@ -323,8 +338,10 @@ namespace UImGui
          */
         static void CodeInline(const char* begin, const char* end, ImColor backgroundColour = UIMGUI_BLOCKQUOTE_TEXT_COLOUR) noexcept;
 
-        // C++ std::string abstraction on top of the normal CodeInline function
-        static void CodeInline(const std::string& text, ImColor backgroundColour = UIMGUI_BLOCKQUOTE_TEXT_COLOUR) noexcept;
+#ifdef UIMGUI_TEXT_UTILS_STRING
+        // C++ TString abstraction on top of the normal CodeInline function
+        static void CodeInline(const TString& text, ImColor backgroundColour = UIMGUI_BLOCKQUOTE_TEXT_COLOUR) noexcept;
+#endif
 
         /**
          * @brief Renders inline code with word wrapping
@@ -334,8 +351,10 @@ namespace UImGui
          */
         static void CodeInlineWrapped(const char* begin, const char* end, ImColor backgroundColour = UIMGUI_BLOCKQUOTE_TEXT_COLOUR) noexcept;
 
-        // C++ std::string abstraction on top of the normal CodeInlineWrapped function
-        static void CodeInlineWrapped(const std::string& text, ImColor backgroundColour = UIMGUI_BLOCKQUOTE_TEXT_COLOUR) noexcept;
+#ifdef UIMGUI_TEXT_UTILS_STRING
+        // C++ TString abstraction on top of the normal CodeInlineWrapped function
+        static void CodeInlineWrapped(const TString& text, ImColor backgroundColour = UIMGUI_BLOCKQUOTE_TEXT_COLOUR) noexcept;
+#endif
 
         // dear imgui's ImGui::ShowDemoWindow equivalent. While the only argument is a void*, treat it as a boolean
         static void ShowDemoWindow(void* bOpen = nullptr) noexcept;

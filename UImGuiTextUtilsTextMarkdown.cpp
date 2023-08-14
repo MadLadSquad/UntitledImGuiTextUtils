@@ -3,7 +3,6 @@
 // - Strikethrough text
 // - Highlight text
 #include "UImGuiTextUtils.hpp"
-#include <iostream>
 
 void UImGui::TextUtils::Underline(ImColor colour) noexcept
 {
@@ -53,15 +52,17 @@ void UImGui::TextUtils::LinkWrapped(const char* text, const char* end, ImColor c
     ImGui::PopStyleColor();
 }
 
-UImGui::TextUtils::WidgetState UImGui::TextUtils::UnderlineWrapped(const std::string& text, ImColor colour) noexcept
+#ifdef UIMGUI_TEXT_UTILS_STRING
+UImGui::TextUtils::WidgetState UImGui::TextUtils::UnderlineWrapped(const TString& text, ImColor colour) noexcept
 {
     return UnderlineWrapped(text.c_str(), text.c_str() + text.size(), colour);
 }
 
-void UImGui::TextUtils::LinkWrapped(const std::string& text, ImColor colour, const std::function<void(const char*)>& clicked) noexcept
+void UImGui::TextUtils::LinkWrapped(const TString& text, ImColor colour, const std::function<void(const char*)>& clicked) noexcept
 {
     return LinkWrapped(text.c_str(), text.c_str() + text.size(), colour, clicked);
 }
+#endif
 
 void UImGui::TextUtils::Strikethrough(ImColor colour) noexcept
 {
@@ -81,10 +82,12 @@ UImGui::TextUtils::WidgetState UImGui::TextUtils::StrikethroughWrapped(const cha
     return renderWrappedTextGeneric(text, end, colour, [](ImColor color) -> void { Strikethrough(color); }, [](ImColor) -> void {});
 }
 
-UImGui::TextUtils::WidgetState UImGui::TextUtils::StrikethroughWrapped(const std::string& text, ImColor colour) noexcept
+#ifdef UIMGUI_TEXT_UTILS_STRING
+UImGui::TextUtils::WidgetState UImGui::TextUtils::StrikethroughWrapped(const TString& text, ImColor colour) noexcept
 {
     return StrikethroughWrapped(text.c_str(), text.c_str() + text.size(), colour);
 }
+#endif
 
 void UImGui::TextUtils::Highlight(ImColor colour) noexcept
 {
@@ -96,10 +99,12 @@ UImGui::TextUtils::WidgetState UImGui::TextUtils::HighlightWrapped(const char* t
     return renderWrappedTextGeneric(text, end, colour, [](ImColor color) -> void { Highlight(color); }, [](ImColor) -> void {});
 }
 
-UImGui::TextUtils::WidgetState UImGui::TextUtils::HighlightWrapped(const std::string& text, ImColor colour) noexcept
+#ifdef UIMGUI_TEXT_UTILS_STRING
+UImGui::TextUtils::WidgetState UImGui::TextUtils::HighlightWrapped(const TString& text, ImColor colour) noexcept
 {
     return HighlightWrapped(text.c_str(), text.c_str() + text.size(), colour);
 }
+#endif
 
 void UImGui::TextUtils::Blockquote(ImColor colour) noexcept
 {
@@ -126,10 +131,12 @@ void UImGui::TextUtils::BlockquoteWrapped(const char* text, const char* end, ImC
     });
 }
 
-void UImGui::TextUtils::BlockquoteWrapped(const std::string& text, ImColor colour) noexcept
+#ifdef UIMGUI_TEXT_UTILS_STRING
+void UImGui::TextUtils::BlockquoteWrapped(const TString& text, ImColor colour) noexcept
 {
     BlockquoteWrapped(text.c_str(), text.c_str() + text.size(), colour);
 }
+#endif
 
 void UImGui::TextUtils::CodeBlock(const char* begin, const char* end, bool bWrapText, ImColor backgroundColour) noexcept
 {
@@ -153,10 +160,12 @@ void UImGui::TextUtils::CodeBlock(const char* begin, const char* end, bool bWrap
     ImGui::InvisibleButton("##code", size);
 }
 
-void UImGui::TextUtils::CodeBlock(const std::string& text, bool bWrapText, ImColor backgroundColour) noexcept
+#ifdef UIMGUI_TEXT_UTILS_STRING
+void UImGui::TextUtils::CodeBlock(const TString& text, bool bWrapText, ImColor backgroundColour) noexcept
 {
     CodeBlock(text.c_str(), text.c_str() + text.size(), bWrapText, backgroundColour);
 }
+#endif
 
 void UImGui::TextUtils::CodeInlineWrapped(const char* begin, const char* end, ImColor backgroundColour) noexcept
 {
@@ -182,10 +191,12 @@ void UImGui::TextUtils::CodeInlineWrapped(const char* begin, const char* end, Im
     });
 }
 
-void UImGui::TextUtils::CodeInlineWrapped(const std::string& text, ImColor backgroundColour) noexcept
+#ifdef UIMGUI_TEXT_UTILS_STRING
+void UImGui::TextUtils::CodeInlineWrapped(const TString& text, ImColor backgroundColour) noexcept
 {
     CodeInlineWrapped(text.c_str(), text.c_str() + text.size(), backgroundColour);
 }
+#endif
 
 void UImGui::TextUtils::CodeInline(const char* begin, const char* end, ImColor backgroundColour) noexcept
 {
@@ -207,10 +218,12 @@ void UImGui::TextUtils::CodeInline(const char* begin, const char* end, ImColor b
     ImGui::InvisibleButton("##code", size);
 }
 
-void UImGui::TextUtils::CodeInline(const std::string& text, ImColor backgroundColour) noexcept
+#ifdef UIMGUI_TEXT_UTILS_STRING
+void UImGui::TextUtils::CodeInline(const TString& text, ImColor backgroundColour) noexcept
 {
     CodeInline(text.c_str(), text.c_str() + text.size(), backgroundColour);
 }
+#endif
 
 UImGui::TextUtils::WidgetState UImGui::TextUtils::renderWrappedTextGeneric(const char* text, const char* end, ImColor colour,
                                                                            const std::function<void(ImColor)>& after,

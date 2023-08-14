@@ -119,16 +119,19 @@ void UImGui::TextUtils::Ruby(const char* textBegin, const char* textEnd, const c
     ImGui::EndGroup();
 }
 
-void UImGui::TextUtils::Ruby(const std::string& text, const std::string& annotation, bool bWrapAnnotation, bool bWrapText) noexcept
+#ifdef UIMGUI_TEXT_UTILS_STRING
+void UImGui::TextUtils::Ruby(const TString& text, const TString& annotation, bool bWrapAnnotation, bool bWrapText) noexcept
 {
     Ruby(text.c_str(), text.c_str() + text.size(), annotation.c_str(), annotation.c_str() + annotation.size(), bWrapAnnotation, bWrapText);
 }
 
-void UImGui::TextUtils::SubSuperscript(const std::string& subscript, const std::string& superscript) noexcept
+
+void UImGui::TextUtils::SubSuperscript(const TString& subscript, const TString& superscript) noexcept
 {
     SubSuperscript(subscript.c_str(), subscript.c_str() + subscript.size(),
                    superscript.c_str(), superscript.c_str() + superscript.size());
 }
+#endif
 
 void UImGui::TextUtils::SubSuperscript(const char* subscriptBegin, const char* subscriptEnd,
                                        const char* superscriptBegin, const char* superscriptEnd) noexcept
