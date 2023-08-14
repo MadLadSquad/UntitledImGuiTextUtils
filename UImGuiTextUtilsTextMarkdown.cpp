@@ -52,7 +52,7 @@ void UImGui::TextUtils::LinkWrapped(const char* text, const char* end, ImColor c
     ImGui::PopStyleColor();
 }
 
-#ifdef UIMGUI_TEXT_UTILS_STRING
+#ifndef UIMGUI_TEXT_UTILS_DISABLE_STRING
 UImGui::TextUtils::WidgetState UImGui::TextUtils::UnderlineWrapped(const TString& text, ImColor colour) noexcept
 {
     return UnderlineWrapped(text.c_str(), text.c_str() + text.size(), colour);
@@ -82,7 +82,7 @@ UImGui::TextUtils::WidgetState UImGui::TextUtils::StrikethroughWrapped(const cha
     return renderWrappedTextGeneric(text, end, colour, [](ImColor color) -> void { Strikethrough(color); }, [](ImColor) -> void {});
 }
 
-#ifdef UIMGUI_TEXT_UTILS_STRING
+#ifndef UIMGUI_TEXT_UTILS_DISABLE_STRING
 UImGui::TextUtils::WidgetState UImGui::TextUtils::StrikethroughWrapped(const TString& text, ImColor colour) noexcept
 {
     return StrikethroughWrapped(text.c_str(), text.c_str() + text.size(), colour);
@@ -99,7 +99,7 @@ UImGui::TextUtils::WidgetState UImGui::TextUtils::HighlightWrapped(const char* t
     return renderWrappedTextGeneric(text, end, colour, [](ImColor color) -> void { Highlight(color); }, [](ImColor) -> void {});
 }
 
-#ifdef UIMGUI_TEXT_UTILS_STRING
+#ifndef UIMGUI_TEXT_UTILS_DISABLE_STRING
 UImGui::TextUtils::WidgetState UImGui::TextUtils::HighlightWrapped(const TString& text, ImColor colour) noexcept
 {
     return HighlightWrapped(text.c_str(), text.c_str() + text.size(), colour);
@@ -131,7 +131,7 @@ void UImGui::TextUtils::BlockquoteWrapped(const char* text, const char* end, ImC
     });
 }
 
-#ifdef UIMGUI_TEXT_UTILS_STRING
+#ifndef UIMGUI_TEXT_UTILS_DISABLE_STRING
 void UImGui::TextUtils::BlockquoteWrapped(const TString& text, ImColor colour) noexcept
 {
     BlockquoteWrapped(text.c_str(), text.c_str() + text.size(), colour);
@@ -160,7 +160,7 @@ void UImGui::TextUtils::CodeBlock(const char* begin, const char* end, bool bWrap
     ImGui::InvisibleButton("##code", size);
 }
 
-#ifdef UIMGUI_TEXT_UTILS_STRING
+#ifndef UIMGUI_TEXT_UTILS_DISABLE_STRING
 void UImGui::TextUtils::CodeBlock(const TString& text, bool bWrapText, ImColor backgroundColour) noexcept
 {
     CodeBlock(text.c_str(), text.c_str() + text.size(), bWrapText, backgroundColour);
@@ -191,7 +191,7 @@ void UImGui::TextUtils::CodeInlineWrapped(const char* begin, const char* end, Im
     });
 }
 
-#ifdef UIMGUI_TEXT_UTILS_STRING
+#ifndef UIMGUI_TEXT_UTILS_DISABLE_STRING
 void UImGui::TextUtils::CodeInlineWrapped(const TString& text, ImColor backgroundColour) noexcept
 {
     CodeInlineWrapped(text.c_str(), text.c_str() + text.size(), backgroundColour);
@@ -218,7 +218,7 @@ void UImGui::TextUtils::CodeInline(const char* begin, const char* end, ImColor b
     ImGui::InvisibleButton("##code", size);
 }
 
-#ifdef UIMGUI_TEXT_UTILS_STRING
+#ifndef UIMGUI_TEXT_UTILS_DISABLE_STRING
 void UImGui::TextUtils::CodeInline(const TString& text, ImColor backgroundColour) noexcept
 {
     CodeInline(text.c_str(), text.c_str() + text.size(), backgroundColour);

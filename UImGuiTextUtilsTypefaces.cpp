@@ -119,7 +119,7 @@ void UImGui::TextUtils::Ruby(const char* textBegin, const char* textEnd, const c
     ImGui::EndGroup();
 }
 
-#ifdef UIMGUI_TEXT_UTILS_STRING
+#ifndef UIMGUI_TEXT_UTILS_DISABLE_STRING
 void UImGui::TextUtils::Ruby(const TString& text, const TString& annotation, bool bWrapAnnotation, bool bWrapText) noexcept
 {
     Ruby(text.c_str(), text.c_str() + text.size(), annotation.c_str(), annotation.c_str() + annotation.size(), bWrapAnnotation, bWrapText);
