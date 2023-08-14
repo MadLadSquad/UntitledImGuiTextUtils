@@ -336,6 +336,9 @@ namespace UImGui
 
         // C++ std::string abstraction on top of the normal CodeInlineWrapped function
         static void CodeInlineWrapped(const std::string& text, ImColor backgroundColour = UIMGUI_BLOCKQUOTE_TEXT_COLOUR) noexcept;
+
+        // dear imgui's ImGui::ShowDemoWindow equivalent. While the only argument is a void*, treat it as a boolean
+        static void ShowDemoWindow(void* bOpen = nullptr) noexcept;
     private:
         static void customFontGenericText(const char* fmt, ImFont* font, va_list args) noexcept;
         static void customFontGenericTextWrapped(const char* fmt, ImFont* font, va_list args) noexcept;
