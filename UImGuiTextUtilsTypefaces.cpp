@@ -57,12 +57,12 @@ void UImGui::TextUtils::MonospaceWrapped(const char* fmt, ...) noexcept
 
 void UImGui::TextUtils::Small(const char* fmt, ...) noexcept
 {
-    CUSTOM_FONT_BOILERPLATE(fmt, small);
+    CUSTOM_FONT_BOILERPLATE(fmt, smallFont);
 }
 
 void UImGui::TextUtils::SmallWrapped(const char* fmt, ...) noexcept
 {
-    CUSTOM_FONT_BOILERPLATE_WRAPPED(fmt, small);
+    CUSTOM_FONT_BOILERPLATE_WRAPPED(fmt, smallFont);
 }
 
 void UImGui::TextUtils::customFontGenericText(const char* fmt, ImFont* font, va_list args) noexcept
@@ -84,18 +84,18 @@ void UImGui::TextUtils::Ruby(const char* textBegin, const char* textEnd, const c
     static float width = 0.0f;
 
     ImGui::BeginGroup();
-    auto offset = (UIMGUI_TEXT_UTILS_DATA->small->FontSize / 2);
+    auto offset = (UIMGUI_TEXT_UTILS_DATA->smallFont->FontSize / 2);
 
     // Render
     {
         auto min = ImGui::GetCursorScreenPos();
         min.y -= offset;
 
-        auto textSize = UIMGUI_TEXT_UTILS_DATA->small->CalcTextSizeA(UIMGUI_TEXT_UTILS_DATA->small->FontSize, FLT_MAX, width, annotationBegin, annotationEnd);
+        auto textSize = UIMGUI_TEXT_UTILS_DATA->smallFont->CalcTextSizeA(UIMGUI_TEXT_UTILS_DATA->smallFont->FontSize, FLT_MAX, width, annotationBegin, annotationEnd);
 
         ImVec2 max = { min.x + textSize.x, min.y + textSize.y };
         ImVec2 size = {max.x - min.x, max.y - min.y };
-        ImGui::GetWindowDrawList()->AddText(UIMGUI_TEXT_UTILS_DATA->small, UIMGUI_TEXT_UTILS_DATA->small->FontSize, min,
+        ImGui::GetWindowDrawList()->AddText(UIMGUI_TEXT_UTILS_DATA->smallFont, UIMGUI_TEXT_UTILS_DATA->smallFont->FontSize, min,
                                             ImGui::ColorConvertFloat4ToU32(ImGui::GetStyle().Colors[ImGuiCol_Text]),
                                             annotationBegin, annotationEnd, width);
         // Render an invisible button, which will act as our element
@@ -136,11 +136,11 @@ void UImGui::TextUtils::SubSuperscript(const TString& subscript, const TString& 
 void UImGui::TextUtils::SubSuperscript(const char* subscriptBegin, const char* subscriptEnd,
                                        const char* superscriptBegin, const char* superscriptEnd) noexcept
 {
-    auto offset = (UIMGUI_TEXT_UTILS_DATA->small->FontSize / 2);
+    auto offset = (UIMGUI_TEXT_UTILS_DATA->smallFont->FontSize / 2);
 
-    auto superscriptTextSize = UIMGUI_TEXT_UTILS_DATA->small->CalcTextSizeA(UIMGUI_TEXT_UTILS_DATA->small->FontSize, FLT_MAX,
+    auto superscriptTextSize = UIMGUI_TEXT_UTILS_DATA->smallFont->CalcTextSizeA(UIMGUI_TEXT_UTILS_DATA->smallFont->FontSize, FLT_MAX,
                                                                             -1.0f, superscriptBegin, superscriptEnd);
-    auto subscriptTextSize = UIMGUI_TEXT_UTILS_DATA->small->CalcTextSizeA(UIMGUI_TEXT_UTILS_DATA->small->FontSize, FLT_MAX,
+    auto subscriptTextSize = UIMGUI_TEXT_UTILS_DATA->smallFont->CalcTextSizeA(UIMGUI_TEXT_UTILS_DATA->smallFont->FontSize, FLT_MAX,
                                                                             -1.0f, subscriptBegin, subscriptEnd);
     ImVec2 min = ImGui::GetCursorScreenPos();
     min.y -= offset;
@@ -148,7 +148,7 @@ void UImGui::TextUtils::SubSuperscript(const char* subscriptBegin, const char* s
 
         ImVec2 max = { min.x + superscriptTextSize.x, min.y + superscriptTextSize.y + ImGui::GetStyle().FramePadding.y - offset };
         ImVec2 size = { max.x - min.x, max.y - min.y };
-        ImGui::GetWindowDrawList()->AddText(UIMGUI_TEXT_UTILS_DATA->small, UIMGUI_TEXT_UTILS_DATA->small->FontSize, min,
+        ImGui::GetWindowDrawList()->AddText(UIMGUI_TEXT_UTILS_DATA->smallFont, UIMGUI_TEXT_UTILS_DATA->smallFont->FontSize, min,
                                             ImGui::ColorConvertFloat4ToU32(ImGui::GetStyle().Colors[ImGuiCol_Text]),
                                             superscriptBegin, superscriptEnd, -1.0f);
 
@@ -158,7 +158,7 @@ void UImGui::TextUtils::SubSuperscript(const char* subscriptBegin, const char* s
     {
         ImVec2 max = { min.x + subscriptTextSize.x, min.y + subscriptTextSize.y + ImGui::GetStyle().FramePadding.y - offset };
         ImVec2 size = { max.x - min.x, max.y - min.y };
-        ImGui::GetWindowDrawList()->AddText(UIMGUI_TEXT_UTILS_DATA->small, UIMGUI_TEXT_UTILS_DATA->small->FontSize, { min.x, max.y },
+        ImGui::GetWindowDrawList()->AddText(UIMGUI_TEXT_UTILS_DATA->smallFont, UIMGUI_TEXT_UTILS_DATA->smallFont->FontSize, { min.x, max.y },
                                             ImGui::ColorConvertFloat4ToU32(ImGui::GetStyle().Colors[ImGuiCol_Text]),
                                             subscriptBegin, subscriptEnd, -1.0f);
 

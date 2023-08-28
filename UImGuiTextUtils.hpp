@@ -33,7 +33,7 @@ namespace UImGui
         ImFont* italic;
         ImFont* boldItalic;
         ImFont* monospace;
-        ImFont* small;
+        ImFont* smallFont;
 
         std::function<void(const char*)> defaultLinkClickEvent = [](const char*) -> void {};
     };
