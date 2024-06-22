@@ -141,11 +141,11 @@ namespace UImGui
          * @return State of the text, represented using the WidgetState bitmask
          */
         template<typename ...Args>
-        static WidgetState Underline(const char* fmt, ImColor colour = UIMGUI_TEXT_COLOUR, Args... args) noexcept
+        static WidgetState Underline(const char* fmt, const ImColor colour = UIMGUI_TEXT_COLOUR, Args... args) noexcept
         {
             ImGui::Text(fmt, (args)...);
-            auto bHovered = ImGui::IsItemHovered() ? UIMGUI_TEXT_UTILS_WIDGET_STATE_HOVERED : 0;
-            auto bClicked = ImGui::IsMouseClicked(ImGuiMouseButton_Left) ? UIMGUI_TEXT_UTILS_WIDGET_STATE_CLICKED : 0;
+            const auto bHovered = ImGui::IsItemHovered() ? UIMGUI_TEXT_UTILS_WIDGET_STATE_HOVERED : 0;
+            const auto bClicked = ImGui::IsMouseClicked(ImGuiMouseButton_Left) ? UIMGUI_TEXT_UTILS_WIDGET_STATE_CLICKED : 0;
             Underline(colour);
 
             return static_cast<WidgetState>(bHovered | bClicked);
@@ -183,11 +183,11 @@ namespace UImGui
          * @return State of the text, represented using the WidgetState bitmask
          */
         template<typename ...Args>
-        static WidgetState Strikethrough(const char* fmt, ImColor colour = UIMGUI_TEXT_COLOUR, Args... args) noexcept
+        static WidgetState Strikethrough(const char* fmt, const ImColor colour = UIMGUI_TEXT_COLOUR, Args... args) noexcept
         {
             ImGui::Text(fmt, (args)...);
-            auto bHovered = ImGui::IsItemHovered() ? UIMGUI_TEXT_UTILS_WIDGET_STATE_HOVERED : 0;
-            auto bClicked = ImGui::IsMouseClicked(ImGuiMouseButton_Left) ? UIMGUI_TEXT_UTILS_WIDGET_STATE_CLICKED : 0;
+            const auto bHovered = ImGui::IsItemHovered() ? UIMGUI_TEXT_UTILS_WIDGET_STATE_HOVERED : 0;
+            const auto bClicked = ImGui::IsMouseClicked(ImGuiMouseButton_Left) ? UIMGUI_TEXT_UTILS_WIDGET_STATE_CLICKED : 0;
             Strikethrough(colour);
 
             return static_cast<WidgetState>(bHovered | bClicked);
@@ -251,11 +251,11 @@ namespace UImGui
          * @return State of the text, represented using the WidgetState bitmask
          */
         template<typename ...Args>
-        static WidgetState Highlight(const char* fmt, ImColor colour = UIMGUI_HIGHLIGHT_TEXT_COLOUR, Args... args) noexcept
+        static WidgetState Highlight(const char* fmt, const ImColor colour = UIMGUI_HIGHLIGHT_TEXT_COLOUR, Args... args) noexcept
         {
             ImGui::Text(fmt, (args)...);
-            auto bHovered = ImGui::IsItemHovered() ? UIMGUI_TEXT_UTILS_WIDGET_STATE_HOVERED : 0;
-            auto bClicked = ImGui::IsMouseClicked(ImGuiMouseButton_Left) ? UIMGUI_TEXT_UTILS_WIDGET_STATE_CLICKED : 0;
+            const auto bHovered = ImGui::IsItemHovered() ? UIMGUI_TEXT_UTILS_WIDGET_STATE_HOVERED : 0;
+            const auto bClicked = ImGui::IsMouseClicked(ImGuiMouseButton_Left) ? UIMGUI_TEXT_UTILS_WIDGET_STATE_CLICKED : 0;
             Highlight(colour);
 
             return static_cast<WidgetState>(bHovered | bClicked);
@@ -292,7 +292,7 @@ namespace UImGui
          * @param args - Variadic arguments passed to ImGui::Text
          */
         template<typename ...Args>
-        static void Blockquote(const char* fmt, ImColor colour = UIMGUI_BLOCKQUOTE_TEXT_COLOUR, Args... args) noexcept
+        static void Blockquote(const char* fmt, const ImColor colour = UIMGUI_BLOCKQUOTE_TEXT_COLOUR, Args... args) noexcept
         {
             Blockquote(colour);
             ImGui::SameLine();

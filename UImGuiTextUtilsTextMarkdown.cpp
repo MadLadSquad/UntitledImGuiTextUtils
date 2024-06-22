@@ -4,31 +4,31 @@
 // - Highlight text
 #include "UImGuiTextUtils.hpp"
 
-void UImGui::TextUtils::Underline(ImColor colour) noexcept
+void UImGui::TextUtils::Underline(const ImColor colour) noexcept
 {
-    ImVec2 min = ImGui::GetItemRectMin();
-    ImVec2 max = ImGui::GetItemRectMax();
+    auto min = ImGui::GetItemRectMin();
+    const auto max = ImGui::GetItemRectMax();
 
     min.y = max.y;
 
     ImGui::GetWindowDrawList()->AddLine(min, max, colour, 1.0f);
 }
 
-UImGui::TextUtils::WidgetState UImGui::TextUtils::UnderlineWrapped(const char* text, const char* end, ImColor colour) noexcept
+UImGui::TextUtils::WidgetState UImGui::TextUtils::UnderlineWrapped(const char* text, const char* end, const ImColor colour) noexcept
 {
-    return renderWrappedTextGeneric(text, end, colour, [](ImColor color) -> void { Underline(color); }, [](ImColor) -> void {});
+    return renderWrappedTextGeneric(text, end, colour, [](ImColor col) -> void { Underline(col); }, [](ImColor) -> void {});
 }
 
-bool UImGui::TextUtils::isPartOfWord(char character) noexcept
+bool UImGui::TextUtils::isPartOfWord(const char character) noexcept
 {
     return character != ' ' && character != '.' && character != ',' && character != '!' && character != '?' &&
            character != '\'' && character != '\"' && character != '`';
 }
 
-void UImGui::TextUtils::Link(const char* text, ImColor colour, const std::function<void(const char* link)>& clicked) noexcept
+void UImGui::TextUtils::Link(const char* text, const ImColor colour, const std::function<void(const char* link)>& clicked) noexcept
 {
     ImGui::PushStyleColor(ImGuiCol_Text, colour.Value);
-    auto state = Underline(text, colour, "");
+    const auto state = Underline(text, colour, "");
     if (state & UIMGUI_TEXT_UTILS_WIDGET_STATE_HOVERED)
     {
         ImGui::SetMouseCursor(ImGuiMouseCursor_Hand);
@@ -39,10 +39,10 @@ void UImGui::TextUtils::Link(const char* text, ImColor colour, const std::functi
     ImGui::PopStyleColor();
 }
 
-void UImGui::TextUtils::LinkWrapped(const char* text, const char* end, ImColor colour, const std::function<void(const char* link)>& clicked) noexcept
+void UImGui::TextUtils::LinkWrapped(const char* text, const char* end, const ImColor colour, const std::function<void(const char* link)>& clicked) noexcept
 {
     ImGui::PushStyleColor(ImGuiCol_Text, colour.Value);
-    auto state = UnderlineWrapped(text, end, colour);
+    const auto state = UnderlineWrapped(text, end, colour);
     if (state & UIMGUI_TEXT_UTILS_WIDGET_STATE_HOVERED)
     {
         ImGui::SetMouseCursor(ImGuiMouseCursor_Hand);
@@ -53,18 +53,18 @@ void UImGui::TextUtils::LinkWrapped(const char* text, const char* end, ImColor c
 }
 
 #ifndef UIMGUI_TEXT_UTILS_DISABLE_STRING
-UImGui::TextUtils::WidgetState UImGui::TextUtils::UnderlineWrapped(const TString& text, ImColor colour) noexcept
+UImGui::TextUtils::WidgetState UImGui::TextUtils::UnderlineWrapped(const TString& text, const ImColor colour) noexcept
 {
     return UnderlineWrapped(text.c_str(), text.c_str() + text.size(), colour);
 }
 
-void UImGui::TextUtils::LinkWrapped(const TString& text, ImColor colour, const std::function<void(const char*)>& clicked) noexcept
+void UImGui::TextUtils::LinkWrapped(const TString& text, const ImColor colour, const std::function<void(const char*)>& clicked) noexcept
 {
     return LinkWrapped(text.c_str(), text.c_str() + text.size(), colour, clicked);
 }
 #endif
 
-void UImGui::TextUtils::Strikethrough(ImColor colour) noexcept
+void UImGui::TextUtils::Strikethrough(const ImColor colour) noexcept
 {
     ImVec2 min = ImGui::GetItemRectMin();
     ImVec2 max = ImGui::GetItemRectMax();
@@ -76,45 +76,45 @@ void UImGui::TextUtils::Strikethrough(ImColor colour) noexcept
     ImGui::GetWindowDrawList()->AddLine(min, max, colour, 0.25f);
 }
 
-UImGui::TextUtils::WidgetState UImGui::TextUtils::StrikethroughWrapped(const char* text, const char* end, ImColor colour) noexcept
+UImGui::TextUtils::WidgetState UImGui::TextUtils::StrikethroughWrapped(const char* text, const char* end, const ImColor colour) noexcept
 {
 
-    return renderWrappedTextGeneric(text, end, colour, [](ImColor color) -> void { Strikethrough(color); }, [](ImColor) -> void {});
+    return renderWrappedTextGeneric(text, end, colour, [](ImColor col) -> void { Strikethrough(col); }, [](ImColor) -> void {});
 }
 
 #ifndef UIMGUI_TEXT_UTILS_DISABLE_STRING
-UImGui::TextUtils::WidgetState UImGui::TextUtils::StrikethroughWrapped(const TString& text, ImColor colour) noexcept
+UImGui::TextUtils::WidgetState UImGui::TextUtils::StrikethroughWrapped(const TString& text, const ImColor colour) noexcept
 {
     return StrikethroughWrapped(text.c_str(), text.c_str() + text.size(), colour);
 }
 #endif
 
-void UImGui::TextUtils::Highlight(ImColor colour) noexcept
+void UImGui::TextUtils::Highlight(const ImColor colour) noexcept
 {
     ImGui::GetWindowDrawList()->AddRectFilled(ImGui::GetItemRectMin(), ImGui::GetItemRectMax(), colour);
 }
 
-UImGui::TextUtils::WidgetState UImGui::TextUtils::HighlightWrapped(const char* text, const char* end, ImColor colour) noexcept 
+UImGui::TextUtils::WidgetState UImGui::TextUtils::HighlightWrapped(const char* text, const char* end, const ImColor colour) noexcept
 {
-    return renderWrappedTextGeneric(text, end, colour, [](ImColor color) -> void { Highlight(color); }, [](ImColor) -> void {});
+    return renderWrappedTextGeneric(text, end, colour, [](ImColor col) -> void { Highlight(col); }, [](ImColor) -> void {});
 }
 
 #ifndef UIMGUI_TEXT_UTILS_DISABLE_STRING
-UImGui::TextUtils::WidgetState UImGui::TextUtils::HighlightWrapped(const TString& text, ImColor colour) noexcept
+UImGui::TextUtils::WidgetState UImGui::TextUtils::HighlightWrapped(const TString& text, const ImColor colour) noexcept
 {
     return HighlightWrapped(text.c_str(), text.c_str() + text.size(), colour);
 }
 #endif
 
-void UImGui::TextUtils::Blockquote(ImColor colour) noexcept
+void UImGui::TextUtils::Blockquote(const ImColor colour) noexcept
 {
     // Get the font size
-    float scale = ImGui::GetFontSize();
+    const float scale = ImGui::GetFontSize();
 
     // Calculate rect size and coordinates
-    ImVec2 min = ImGui::GetCursorScreenPos();
-    ImVec2 max = ImVec2(min.x + (float)(int)(scale / 4) + (float)(int)(scale / 6), min.y + scale + (float)(int)(scale / 2));
-    ImVec2 size = ImVec2(max.x - min.x, max.y - min.y);
+    const auto min = ImGui::GetCursorScreenPos();
+    const auto max = ImVec2(min.x + (float)(int)(scale / 4) + (float)(int)(scale / 6), min.y + scale + (float)(int)(scale / 2));
+    const auto size = ImVec2(max.x - min.x, max.y - min.y);
 
     // Add rectangle with min, max and the colour
     ImGui::GetWindowDrawList()->AddRectFilled(min, max, colour);
@@ -123,7 +123,7 @@ void UImGui::TextUtils::Blockquote(ImColor colour) noexcept
     ImGui::InvisibleButton("##bq", size);
 }
 
-void UImGui::TextUtils::BlockquoteWrapped(const char* text, const char* end, ImColor colour) noexcept
+void UImGui::TextUtils::BlockquoteWrapped(const char* text, const char* end, const ImColor colour) noexcept
 {
     renderWrappedTextGeneric(text, end, colour, [](ImColor) -> void {}, [](ImColor col) -> void {
         Blockquote(col);
@@ -132,23 +132,23 @@ void UImGui::TextUtils::BlockquoteWrapped(const char* text, const char* end, ImC
 }
 
 #ifndef UIMGUI_TEXT_UTILS_DISABLE_STRING
-void UImGui::TextUtils::BlockquoteWrapped(const TString& text, ImColor colour) noexcept
+void UImGui::TextUtils::BlockquoteWrapped(const TString& text, const ImColor colour) noexcept
 {
     BlockquoteWrapped(text.c_str(), text.c_str() + text.size(), colour);
 }
 #endif
 
-void UImGui::TextUtils::CodeBlock(const char* begin, const char* end, bool bWrapText, ImColor backgroundColour) noexcept
+void UImGui::TextUtils::CodeBlock(const char* begin, const char* end, const bool bWrapText, const ImColor backgroundColour) noexcept
 {
-    float wrapWidth = bWrapText ? ImGui::GetContentRegionAvail().x : -1.0f;
+    const float wrapWidth = bWrapText ? ImGui::GetContentRegionAvail().x : -1.0f;
 
     // Get the font size
-    auto textSize = UIMGUI_TEXT_UTILS_DATA->monospace->CalcTextSizeA(UIMGUI_TEXT_UTILS_DATA->monospace->FontSize, FLT_MAX, wrapWidth, begin, end);
+    const auto textSize = UIMGUI_TEXT_UTILS_DATA->monospace->CalcTextSizeA(UIMGUI_TEXT_UTILS_DATA->monospace->FontSize, FLT_MAX, wrapWidth, begin, end);
 
     // Calculate rect size and coordinates
-    ImVec2 min = ImGui::GetCursorScreenPos();
-    ImVec2 max = { min.x + textSize.x, min.y + textSize.y + ImGui::GetStyle().FramePadding.y };
-    ImVec2 size = {max.x - min.x, max.y - min.y };
+    const auto min = ImGui::GetCursorScreenPos();
+    const ImVec2 max = { min.x + textSize.x, min.y + textSize.y + ImGui::GetStyle().FramePadding.y };
+    const ImVec2 size = {max.x - min.x, max.y - min.y };
 
     // Add rectangle with min, max and the colour
     ImGui::GetWindowDrawList()->AddRectFilled(min, max, backgroundColour);
@@ -161,24 +161,24 @@ void UImGui::TextUtils::CodeBlock(const char* begin, const char* end, bool bWrap
 }
 
 #ifndef UIMGUI_TEXT_UTILS_DISABLE_STRING
-void UImGui::TextUtils::CodeBlock(const TString& text, bool bWrapText, ImColor backgroundColour) noexcept
+void UImGui::TextUtils::CodeBlock(const TString& text, const bool bWrapText, const ImColor backgroundColour) noexcept
 {
     CodeBlock(text.c_str(), text.c_str() + text.size(), bWrapText, backgroundColour);
 }
 #endif
 
-void UImGui::TextUtils::CodeInlineWrapped(const char* begin, const char* end, ImColor backgroundColour) noexcept
+void UImGui::TextUtils::CodeInlineWrapped(const char* begin, const char* end, const ImColor backgroundColour) noexcept
 {
     renderWrappedTextGeneric(begin, end, backgroundColour,
-                             [](ImColor) -> void {}, [](ImColor) -> void {}, [](UImGui::TextUtilsData* data, const char* s, const char* e, ImColor colour) -> void
+                             [](ImColor) -> void {}, [](ImColor) -> void {}, [](TextUtilsData* data, const char* s, const char* e, ImColor colour) -> void
     {
         // Get the font size
-        auto textSize = data->monospace->CalcTextSizeA(data->monospace->FontSize, FLT_MAX, -1.0f, s, e);
+        const auto textSize = data->monospace->CalcTextSizeA(data->monospace->FontSize, FLT_MAX, -1.0f, s, e);
 
         // Calculate rect size and coordinates
-        ImVec2 min = ImGui::GetCursorScreenPos();
-        ImVec2 max = { min.x + textSize.x, min.y + textSize.y + ImGui::GetStyle().FramePadding.y };
-        ImVec2 size = {max.x - min.x, max.y - min.y };
+        const auto min = ImGui::GetCursorScreenPos();
+        const ImVec2 max = { min.x + textSize.x, min.y + textSize.y + ImGui::GetStyle().FramePadding.y };
+        const ImVec2 size = {max.x - min.x, max.y - min.y };
 
         // Add rectangle with min, max and the colour
         ImGui::GetWindowDrawList()->AddRectFilled(min, max, colour);
@@ -192,21 +192,21 @@ void UImGui::TextUtils::CodeInlineWrapped(const char* begin, const char* end, Im
 }
 
 #ifndef UIMGUI_TEXT_UTILS_DISABLE_STRING
-void UImGui::TextUtils::CodeInlineWrapped(const TString& text, ImColor backgroundColour) noexcept
+void UImGui::TextUtils::CodeInlineWrapped(const TString& text, const ImColor backgroundColour) noexcept
 {
     CodeInlineWrapped(text.c_str(), text.c_str() + text.size(), backgroundColour);
 }
 #endif
 
-void UImGui::TextUtils::CodeInline(const char* begin, const char* end, ImColor backgroundColour) noexcept
+void UImGui::TextUtils::CodeInline(const char* begin, const char* end, const ImColor backgroundColour) noexcept
 {
     // Get the font size
-    auto textSize = UIMGUI_TEXT_UTILS_DATA->monospace->CalcTextSizeA(UIMGUI_TEXT_UTILS_DATA->monospace->FontSize, FLT_MAX, -1.0f, begin, end);
+    const auto textSize = UIMGUI_TEXT_UTILS_DATA->monospace->CalcTextSizeA(UIMGUI_TEXT_UTILS_DATA->monospace->FontSize, FLT_MAX, -1.0f, begin, end);
 
     // Calculate rect size and coordinates
-    ImVec2 min = ImGui::GetCursorScreenPos();
-    ImVec2 max = { min.x + textSize.x, min.y + textSize.y + ImGui::GetStyle().FramePadding.y };
-    ImVec2 size = {max.x - min.x, max.y - min.y };
+    const auto min = ImGui::GetCursorScreenPos();
+    const ImVec2 max = { min.x + textSize.x, min.y + textSize.y + ImGui::GetStyle().FramePadding.y };
+    const ImVec2 size = {max.x - min.x, max.y - min.y };
 
     // Add rectangle with min, max and the colour
     ImGui::GetWindowDrawList()->AddRectFilled(min, max, backgroundColour);
@@ -219,7 +219,7 @@ void UImGui::TextUtils::CodeInline(const char* begin, const char* end, ImColor b
 }
 
 #ifndef UIMGUI_TEXT_UTILS_DISABLE_STRING
-void UImGui::TextUtils::CodeInline(const TString& text, ImColor backgroundColour) noexcept
+void UImGui::TextUtils::CodeInline(const TString& text, const ImColor backgroundColour) noexcept
 {
     CodeInline(text.c_str(), text.c_str() + text.size(), backgroundColour);
 }
@@ -228,11 +228,11 @@ void UImGui::TextUtils::CodeInline(const TString& text, ImColor backgroundColour
 UImGui::TextUtils::WidgetState UImGui::TextUtils::renderWrappedTextGeneric(const char* text, const char* end, ImColor colour,
                                                                            const std::function<void(ImColor)>& after,
                                                                            const std::function<void(ImColor)>& before,
-                                                                           const std::function<void(UImGui::TextUtilsData*,
+                                                                           const std::function<void(TextUtilsData*,
                                                                                                     const char*, const char*,
                                                                                                     ImColor)>& render) noexcept
 {
-    float scale = ImGui::GetIO().FontGlobalScale;
+    const float scale = ImGui::GetIO().FontGlobalScale;
     float widthAvail = ImGui::GetContentRegionAvail().x;
     const char* endLine = text;
 
@@ -242,7 +242,7 @@ UImGui::TextUtils::WidgetState UImGui::TextUtils::renderWrappedTextGeneric(const
     {
         if (isPartOfWord(*endLine))
         {
-            float nextLineWidth = ImGui::GetContentRegionMax().x;
+            const float nextLineWidth = ImGui::GetContentRegionMax().x;
             const char* nextLineEnd = ImGui::GetFont()->CalcWordWrapPositionA(scale, text, end, nextLineWidth);
             if (nextLineEnd == end || (nextLineEnd <= end && !isPartOfWord(*nextLineEnd)))
                 endLine = text;

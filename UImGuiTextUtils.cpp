@@ -6,14 +6,14 @@ UImGui::TextUtilsData** UImGui::TextUtils::getData() noexcept
     return &data;
 }
 
-void UImGui::TextUtils::initTextUtilsData(UImGui::TextUtilsData* data) noexcept
+void UImGui::TextUtils::initTextUtilsData(TextUtilsData* data) noexcept
 {
     *getData() = data;
 }
 
 void UImGui::TextUtils::ShowDemoWindow(void* bOpen) noexcept
 {
-    ImGui::Begin("UntitledImGuiTextUtils Demo Window", (bool*)bOpen);
+    ImGui::Begin("UntitledImGuiTextUtils Demo Window", static_cast<bool*>(bOpen));
 
     ImGui::TextWrapped("Welcome to the UntitledImGuiTextUtils demo. This window showcases all widgets.");
 
