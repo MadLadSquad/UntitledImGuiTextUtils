@@ -65,14 +65,14 @@ void UImGui::TextUtils::SmallWrapped(const char* fmt, ...) noexcept
     CUSTOM_FONT_BOILERPLATE_WRAPPED(fmt, smallFont);
 }
 
-void UImGui::TextUtils::customFontGenericText(const char* fmt, ImFont* font, const va_list args) noexcept
+void UImGui::TextUtils::customFontGenericText(const char* fmt, ImFont* font, va_list args) noexcept
 {
     ImGui::PushFont(font);
     ImGui::TextV(fmt, args);
     ImGui::PopFont();
 }
 
-void UImGui::TextUtils::customFontGenericTextWrapped(const char* fmt, ImFont* font, const va_list args) noexcept
+void UImGui::TextUtils::customFontGenericTextWrapped(const char* fmt, ImFont* font, va_list args) noexcept
 {
     ImGui::PushFont(font);
     ImGui::TextWrappedV(fmt, args);
