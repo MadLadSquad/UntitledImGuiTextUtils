@@ -242,7 +242,8 @@ UImGui::TextUtils::WidgetState UImGui::TextUtils::renderWrappedTextGeneric(const
     {
         if (isPartOfWord(*endLine))
         {
-            const float nextLineWidth = ImGui::GetContentRegionMax().x;
+            // Get maximum line width like this because dear imgui rc 1.90.9+ deprecated these
+            const float nextLineWidth = (ImGui::GetContentRegionAvail() + ImGui::GetCursorScreenPos()).x;
             const char* nextLineEnd = ImGui::GetFont()->CalcWordWrapPositionA(scale, text, end, nextLineWidth);
             if (nextLineEnd == end || (nextLineEnd <= end && !isPartOfWord(*nextLineEnd)))
                 endLine = text;
