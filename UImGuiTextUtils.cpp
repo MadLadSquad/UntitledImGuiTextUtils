@@ -11,6 +11,11 @@ void UImGui::TextUtils::initTextUtilsData(TextUtilsData* data) noexcept
     *getData() = data;
 }
 
+UImGui::TextUtilsData* UImGui::TextUtils::getTextUtilsData() noexcept
+{
+    return *getData();
+}
+
 void UImGui::TextUtils::ShowDemoWindow(void* bOpen) noexcept
 {
     ImGui::Begin("UntitledImGuiTextUtils Demo Window", static_cast<bool*>(bOpen));

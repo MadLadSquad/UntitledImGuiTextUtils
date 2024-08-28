@@ -50,6 +50,7 @@ namespace UImGui
         };
 
         static void initTextUtilsData(TextUtilsData* data) noexcept;
+        static TextUtilsData* getTextUtilsData() noexcept;
 
         // Renders bold text
         static void Bold(const char* fmt, ...) noexcept;
