@@ -20,9 +20,19 @@ void UImGui::TextUtils::Bold(const char* fmt, ...) noexcept
     CUSTOM_FONT_BOILERPLATE(fmt, bold);
 }
 
+void UImGui::TextUtils::BoldV(const char* fmt, const va_list list) noexcept
+{
+    customFontGenericText(fmt, UIMGUI_TEXT_UTILS_DATA->bold, list);
+}
+
 void UImGui::TextUtils::BoldWrapped(const char* fmt, ...) noexcept
 {
     CUSTOM_FONT_BOILERPLATE_WRAPPED(fmt, bold);
+}
+
+void UImGui::TextUtils::BoldWrappedV(const char* fmt, const va_list list) noexcept
+{
+    customFontGenericTextWrapped(fmt, UIMGUI_TEXT_UTILS_DATA->bold, list);
 }
 
 void UImGui::TextUtils::Italic(const char* fmt, ...) noexcept
@@ -30,9 +40,19 @@ void UImGui::TextUtils::Italic(const char* fmt, ...) noexcept
     CUSTOM_FONT_BOILERPLATE(fmt, italic);
 }
 
+void UImGui::TextUtils::ItalicV(const char* fmt, const va_list list) noexcept
+{
+    customFontGenericText(fmt, UIMGUI_TEXT_UTILS_DATA->italic, list);
+}
+
 void UImGui::TextUtils::ItalicWrapped(const char* fmt, ...) noexcept
 {
     CUSTOM_FONT_BOILERPLATE_WRAPPED(fmt, italic);
+}
+
+void UImGui::TextUtils::ItalicWrappedV(const char* fmt, const va_list list) noexcept
+{
+    customFontGenericTextWrapped(fmt, UIMGUI_TEXT_UTILS_DATA->italic, list);
 }
 
 void UImGui::TextUtils::BoldItalic(const char* fmt, ...) noexcept
@@ -40,9 +60,19 @@ void UImGui::TextUtils::BoldItalic(const char* fmt, ...) noexcept
     CUSTOM_FONT_BOILERPLATE(fmt, boldItalic);
 }
 
+void UImGui::TextUtils::BoldItalicV(const char* fmt, va_list const list) noexcept
+{
+    customFontGenericText(fmt, UIMGUI_TEXT_UTILS_DATA->boldItalic, list);
+}
+
 void UImGui::TextUtils::BoldItalicWrapped(const char* fmt, ...) noexcept
 {
     CUSTOM_FONT_BOILERPLATE_WRAPPED(fmt, boldItalic);
+}
+
+void UImGui::TextUtils::BoldItalicWrappedV(const char* fmt, const va_list list) noexcept
+{
+    customFontGenericTextWrapped(fmt, UIMGUI_TEXT_UTILS_DATA->boldItalic, list);
 }
 
 void UImGui::TextUtils::Monospace(const char* fmt, ...) noexcept
@@ -50,9 +80,19 @@ void UImGui::TextUtils::Monospace(const char* fmt, ...) noexcept
     CUSTOM_FONT_BOILERPLATE(fmt, monospace);
 }
 
+void UImGui::TextUtils::MonospaceV(const char* fmt, const va_list list) noexcept
+{
+    customFontGenericText(fmt, UIMGUI_TEXT_UTILS_DATA->monospace, list);
+}
+
 void UImGui::TextUtils::MonospaceWrapped(const char* fmt, ...) noexcept
 {
     CUSTOM_FONT_BOILERPLATE_WRAPPED(fmt, monospace);
+}
+
+void UImGui::TextUtils::MonospaceWrappedV(const char* fmt, const va_list list) noexcept
+{
+    customFontGenericTextWrapped(fmt, UIMGUI_TEXT_UTILS_DATA->monospace, list);
 }
 
 void UImGui::TextUtils::Small(const char* fmt, ...) noexcept
@@ -60,19 +100,29 @@ void UImGui::TextUtils::Small(const char* fmt, ...) noexcept
     CUSTOM_FONT_BOILERPLATE(fmt, smallFont);
 }
 
+void UImGui::TextUtils::SmallV(const char* fmt, const va_list list) noexcept
+{
+    customFontGenericText(fmt, UIMGUI_TEXT_UTILS_DATA->smallFont, list);
+}
+
 void UImGui::TextUtils::SmallWrapped(const char* fmt, ...) noexcept
 {
     CUSTOM_FONT_BOILERPLATE_WRAPPED(fmt, smallFont);
 }
 
-void UImGui::TextUtils::customFontGenericText(const char* fmt, ImFont* font, va_list args) noexcept
+void UImGui::TextUtils::SmallWrappedV(const char* fmt, const va_list list) noexcept
+{
+    customFontGenericTextWrapped(fmt, UIMGUI_TEXT_UTILS_DATA->smallFont, list);
+}
+
+void UImGui::TextUtils::customFontGenericText(const char* fmt, ImFont* font, const va_list args) noexcept
 {
     ImGui::PushFont(font);
     ImGui::TextV(fmt, args);
     ImGui::PopFont();
 }
 
-void UImGui::TextUtils::customFontGenericTextWrapped(const char* fmt, ImFont* font, va_list args) noexcept
+void UImGui::TextUtils::customFontGenericTextWrapped(const char* fmt, ImFont* font, const va_list args) noexcept
 {
     ImGui::PushFont(font);
     ImGui::TextWrappedV(fmt, args);

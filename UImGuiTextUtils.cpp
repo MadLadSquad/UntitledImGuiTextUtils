@@ -6,6 +6,11 @@ UImGui::TextUtilsData** UImGui::TextUtils::getData() noexcept
     return &data;
 }
 
+UImGui::TextUtils::Colour UImGui::TextUtils::getDefaultTextColour() noexcept
+{
+    return ImGui::GetColorU32(ImGui::GetStyle().Colors[ImGuiCol_Text]);
+}
+
 void UImGui::TextUtils::initTextUtilsData(TextUtilsData* data) noexcept
 {
     *getData() = data;
@@ -89,13 +94,13 @@ void UImGui::TextUtils::ShowDemoWindow(void* bOpen) noexcept
 
     if (ImGui::CollapsingHeader("Rich text"))
     {
-        static ImVec4 underlineColour = ImGui::GetStyle().Colors[ImGuiCol_Text];
-        static ImVec4 strikethroughColour = ImGui::GetStyle().Colors[ImGuiCol_Text];
-        static ImVec4 linkColour = ImGui::ColorConvertU32ToFloat4(UIMGUI_LINK_TEXT_UNVISITED);
-        static ImVec4 highlightColour = ImGui::ColorConvertU32ToFloat4(UIMGUI_HIGHLIGHT_TEXT_COLOUR);
+        static auto underlineColour =       ImGui::GetColorU32(ImGui::GetStyle().Colors[ImGuiCol_Text]);
+        static auto strikethroughColour =   ImGui::GetColorU32(ImGui::GetStyle().Colors[ImGuiCol_Text]);
+        static auto linkColour =            ImGui::GetColorU32(ImGui::ColorConvertU32ToFloat4(UIMGUI_LINK_TEXT_UNVISITED));
+        static auto highlightColour =       ImGui::GetColorU32(ImGui::ColorConvertU32ToFloat4(UIMGUI_HIGHLIGHT_TEXT_COLOUR));
 
         ImGui::SeparatorText("Underlined text");
-        ImGui::ColorEdit4("Underline colour", (float*)&underlineColour);
+        ImGui::ColorEdit4("Underline colour", reinterpret_cast<float*>(&underlineColour));
 
         ImGui::TextWrapped("Normal text with underlining after it's rendered");
         Underline(underlineColour);
@@ -104,7 +109,7 @@ void UImGui::TextUtils::ShowDemoWindow(void* bOpen) noexcept
                          "The quick brown fox jumps over the lazy dog.", nullptr, underlineColour);
 
         ImGui::SeparatorText("Strikethrough");
-        ImGui::ColorEdit4("Strikethrough colour", (float*)&strikethroughColour);
+        ImGui::ColorEdit4("Strikethrough colour", reinterpret_cast<float*>(&strikethroughColour));
 
         ImGui::TextWrapped("Normal text with strikethrough after it's rendered");
         Strikethrough(strikethroughColour);
@@ -113,14 +118,14 @@ void UImGui::TextUtils::ShowDemoWindow(void* bOpen) noexcept
                              "The quick brown fox jumps over the lazy dog.", nullptr, strikethroughColour);
 
         ImGui::SeparatorText("Links");
-        ImGui::ColorEdit4("Link colour", (float*)&linkColour);
+        ImGui::ColorEdit4("Link colour", reinterpret_cast<float*>(&linkColour));
 
         Link("Link", linkColour);
         LinkWrapped("Link with text wrapping. The quick brown fox jumps over the lazy dog. "
                              "The quick brown fox jumps over the lazy dog.", nullptr, linkColour);
 
         ImGui::SeparatorText("Highlight");
-        ImGui::ColorEdit4("Highlight colour", (float*)&highlightColour);
+        ImGui::ColorEdit4("Highlight colour", reinterpret_cast<float*>(&highlightColour));
 
         ImGui::TextWrapped("Normal text with highlight after it's rendered");
         Highlight(highlightColour);
@@ -131,8 +136,8 @@ void UImGui::TextUtils::ShowDemoWindow(void* bOpen) noexcept
 
     if (ImGui::CollapsingHeader("Code"))
     {
-        static ImVec4 backgroundColour = ImGui::ColorConvertU32ToFloat4(UIMGUI_BLOCKQUOTE_TEXT_COLOUR);
-        ImGui::ColorEdit4("Code background colour", (float*)&backgroundColour);
+        static auto backgroundColour = UIMGUI_BLOCKQUOTE_TEXT_COLOUR;
+        ImGui::ColorEdit4("Code background colour", reinterpret_cast<float*>(&backgroundColour));
 
         ImGui::SeparatorText("Code blocks");
         static bool bWrapCodeBlock = false;
@@ -154,8 +159,8 @@ int main(int argc, char** argv)
 
     if (ImGui::CollapsingHeader("Blockquotes"))
     {
-        static ImVec4 backgroundColour = ImGui::ColorConvertU32ToFloat4(UIMGUI_BLOCKQUOTE_TEXT_COLOUR);
-        ImGui::ColorEdit4("Blockquote colour", (float*)&backgroundColour);
+        static auto backgroundColour = UIMGUI_BLOCKQUOTE_TEXT_COLOUR;
+        ImGui::ColorEdit4("Blockquote colour", reinterpret_cast<float*>(&backgroundColour));
 
         ImGui::Text("Independent blockquote rect: ");
         ImGui::SameLine();
