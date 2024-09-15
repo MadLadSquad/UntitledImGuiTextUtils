@@ -1,11 +1,21 @@
 #pragma once
 #include "../Common.h"
 
+#define UIMGUI_C_TEXT_COLOUR UImGui_TextUtils_getDefaultTextColour()
+
 #ifdef __cplusplus
 extern "C"
 {
 #endif
     typedef void(*UImGui_TextUtils_LinkCallback)(const char*);
+    typedef void UImGui_CTextUtilsData;
+
+    MLS_PUBLIC_API UImGui_CTextUtilsData* UImGui_TextUtilsData_allocate();
+    MLS_PUBLIC_API void UImGui_TextUtilsData_setFonts(UImGui_CTextUtilsData* data, void* bold, void* italic, void* boldItalic, void* monospace, void* smallFont);
+    MLS_PUBLIC_API void UImGui_TextUtils_initTextUtilsData(UImGui_CTextUtilsData* data);
+    MLS_PUBLIC_API void UImGui_TextUtilsData_free(UImGui_CTextUtilsData* data);
+
+    MLS_PUBLIC_API UImGui_TextUtils_Colour UImGui_TextUtils_getDefaultTextColour();
 
     MLS_PUBLIC_API void UImGui_TextUtils_Bold(const char* fmt, ...);
     MLS_PUBLIC_API void UImGui_TextUtils_BoldWrapped(const char* fmt, ...);

@@ -6,6 +6,36 @@
     x; \
     va_end(args)
 
+#define dt_cast(x) static_cast<UImGui::TextUtilsData*>(x)
+
+UImGui_CTextUtilsData* UImGui_TextUtilsData_allocate()
+{
+    return new UImGui::TextUtilsData{};
+}
+
+void UImGui_TextUtilsData_setFonts(UImGui_CTextUtilsData* data, void* bold, void* italic, void* boldItalic, void* monospace, void* smallFont)
+{
+    dt_cast(data)->bold         = static_cast<ImFont*>(bold);
+    dt_cast(data)->italic       = static_cast<ImFont*>(italic);
+    dt_cast(data)->boldItalic   = static_cast<ImFont*>(boldItalic);
+    dt_cast(data)->monospace    = static_cast<ImFont*>(monospace);
+    dt_cast(data)->smallFont    = static_cast<ImFont*>(smallFont);
+}
+
+void UImGui_TextUtils_initTextUtilsData(UImGui_CTextUtilsData* data)
+{
+    UImGui::TextUtils::initTextUtilsData(dt_cast(data));
+}
+
+void UImGui_TextUtilsData_free(UImGui_CTextUtilsData* data)
+{
+    delete dt_cast(data);
+}
+
+UImGui_TextUtils_Colour UImGui_TextUtils_getDefaultTextColour()
+{
+    return UImGui::TextUtils::getDefaultTextColour();
+}
 
 void UImGui_TextUtils_Bold(const char* fmt, ...)
 {
