@@ -22,7 +22,20 @@ extern "C"
     #define MLS_PUBLIC_API
 #endif
 
-    typedef uint32_t UImGui_TextUtils_Colour;
+    typedef struct UImGui_TextUtils_Colour
+    {
+        union
+        {
+            float coords[4];
+            struct
+            {
+                float x;
+                float y;
+                float z;
+                float w;
+            };
+        };
+    } UImGui_TextUtils_Colour;
 
 #define UIMGUI_COL32_R_SHIFT    0
 #define UIMGUI_COL32_G_SHIFT    8
@@ -40,16 +53,16 @@ extern "C"
 
 
     // The default colour for links that have not been visited
-    #define UIMGUI_LINK_TEXT_UNVISITED UIMGUI_COL32(0, 0, 238, 255)
+    #define UIMGUI_LINK_TEXT_UNVISITED UImGui_TextUtils_Colour{ 0.0f, 0.0f, 0.94, 1.0f }
 
     // The default colour for links that have been visited
-    #define UIMGUI_LINK_TEXT_VISITED UIMGUI_COL32(85, 26, 139, 255)
+    #define UIMGUI_LINK_TEXT_VISITED UImGui_TextUtils_Colour{ 0.34f, 0.1f, 0.55f, 1.0f }
 
     // The default highlight text colour, yellow with ~25% opacity
-    #define UIMGUI_HIGHLIGHT_TEXT_COLOUR UIMGUI_COL32(255, 255, 0, 64)
+    #define UIMGUI_HIGHLIGHT_TEXT_COLOUR UImGui_TextUtils_Colour{ 1.0f, 1.0f, 0.0f, 0.25f }
 
     // The default colour for blockquote rectangle, gray
-    #define UIMGUI_BLOCKQUOTE_TEXT_COLOUR UIMGUI_COL32(69, 71, 90, 255)
+    #define UIMGUI_BLOCKQUOTE_TEXT_COLOUR UImGui_TextUtils_Colour{ 0.27f, 0.28f, 0.35f, 1.0f }
 
 #ifdef __cplusplus
 }

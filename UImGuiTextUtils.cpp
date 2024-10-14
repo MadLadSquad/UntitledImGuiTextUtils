@@ -6,9 +6,30 @@ UImGui::TextUtilsData** UImGui::TextUtils::getData() noexcept
     return &data;
 }
 
+UImGui::TextUtils::Colour::Colour(const ImU32 col) noexcept
+{
+    auto a = ImGui::ColorConvertU32ToFloat4(col);
+    data = *reinterpret_cast<UImGui_TextUtils_Colour*>(&a);
+}
+
+UImGui::TextUtils::Colour::operator UImGui_TextUtils_Colour() const noexcept
+{
+    return data;
+}
+
+UImGui::TextUtils::Colour::operator ImU32() const noexcept
+{
+    return ImGui::ColorConvertFloat4ToU32(*reinterpret_cast<ImVec4*>(&data));
+}
+
+UImGui::TextUtils::Colour::operator ImVec4() const noexcept
+{
+    return *reinterpret_cast<ImVec4*>(&data);
+}
+
 UImGui::TextUtils::Colour UImGui::TextUtils::getDefaultTextColour() noexcept
 {
-    return ImGui::GetColorU32(ImGui::GetStyle().Colors[ImGuiCol_Text]);
+    return *reinterpret_cast<Colour*>(&ImGui::GetStyle().Colors[ImGuiCol_Text]);
 }
 
 void UImGui::TextUtils::initTextUtilsData(TextUtilsData* data) noexcept
@@ -94,10 +115,10 @@ void UImGui::TextUtils::ShowDemoWindow(void* bOpen) noexcept
 
     if (ImGui::CollapsingHeader("Rich text"))
     {
-        static auto underlineColour =       ImGui::GetColorU32(ImGui::GetStyle().Colors[ImGuiCol_Text]);
-        static auto strikethroughColour =   ImGui::GetColorU32(ImGui::GetStyle().Colors[ImGuiCol_Text]);
-        static auto linkColour =            ImGui::GetColorU32(ImGui::ColorConvertU32ToFloat4(UIMGUI_LINK_TEXT_UNVISITED));
-        static auto highlightColour =       ImGui::GetColorU32(ImGui::ColorConvertU32ToFloat4(UIMGUI_HIGHLIGHT_TEXT_COLOUR));
+        static auto underlineColour =      ImGui::GetStyle().Colors[ImGuiCol_Text];
+        static auto strikethroughColour =  ImGui::GetStyle().Colors[ImGuiCol_Text];
+        static auto linkColour =                  UIMGUI_LINK_TEXT_UNVISITED;
+        static auto highlightColour =             UIMGUI_HIGHLIGHT_TEXT_COLOUR;
 
         ImGui::SeparatorText("Underlined text");
         ImGui::ColorEdit4("Underline colour", reinterpret_cast<float*>(&underlineColour));

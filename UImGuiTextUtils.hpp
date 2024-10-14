@@ -31,7 +31,22 @@ namespace UImGui
     {
     public:
         typedef UImGui_TextUtils_WidgetState WidgetState;
-        typedef UImGui_TextUtils_Colour Colour;
+
+        struct Colour
+        {
+        public:
+            Colour() noexcept = default;
+            Colour(const UImGui_TextUtils_Colour& col) noexcept : data(col) {};
+            Colour(const UImGui_TextUtils_Colour&& col) noexcept : data(col) {};
+            Colour(ImVec4 col) noexcept : data(*reinterpret_cast<UImGui_TextUtils_Colour*>(&col)) {};
+            Colour(ImU32 col) noexcept;
+
+            operator UImGui_TextUtils_Colour() const noexcept;
+            operator ImU32() const noexcept;
+            operator ImVec4() const noexcept;
+        private:
+            mutable UImGui_TextUtils_Colour data{};
+        };
 
         static Colour getDefaultTextColour() noexcept;
 

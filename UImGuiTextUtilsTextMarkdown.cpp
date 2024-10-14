@@ -27,7 +27,7 @@ bool UImGui::TextUtils::isPartOfWord(const char character) noexcept
 
 void UImGui::TextUtils::Link(const char* text, const Colour colour, const std::function<void(const char* link)>& clicked) noexcept
 {
-    ImGui::PushStyleColor(ImGuiCol_Text, colour);
+    ImGui::PushStyleColor(ImGuiCol_Text, ImU32{colour});
     const auto state = Underline(text, colour, "");
     if (state & UIMGUI_TEXT_UTILS_WIDGET_STATE_HOVERED)
     {
@@ -41,7 +41,7 @@ void UImGui::TextUtils::Link(const char* text, const Colour colour, const std::f
 
 void UImGui::TextUtils::LinkWrapped(const char* text, const char* end, const Colour colour, const std::function<void(const char* link)>& clicked) noexcept
 {
-    ImGui::PushStyleColor(ImGuiCol_Text, colour);
+    ImGui::PushStyleColor(ImGuiCol_Text, ImU32{colour});
     const auto state = UnderlineWrapped(text, end, colour);
     if (state & UIMGUI_TEXT_UTILS_WIDGET_STATE_HOVERED)
     {
@@ -218,7 +218,9 @@ void UImGui::TextUtils::CodeInline(const char* begin, const char* end, const Col
                                         begin, end, -1.0f);
 
     // Render an invisible button, which will act as our element
+    ImGui::PushID(begin, end);
     ImGui::InvisibleButton("##code", size);
+    ImGui::PopID();
 }
 
 #ifndef UIMGUI_TEXT_UTILS_DISABLE_STRING
