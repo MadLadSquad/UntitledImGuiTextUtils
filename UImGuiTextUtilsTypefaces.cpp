@@ -136,6 +136,7 @@ void UImGui::TextUtils::Ruby(const char* textBegin, const char* textEnd, const c
     ImGui::BeginGroup();
     const auto offset = (UIMGUI_TEXT_UTILS_DATA->smallFont->FontSize / 2);
 
+    ImGui::PushID(textBegin, textEnd);
     // Render
     {
         auto min = ImGui::GetCursorScreenPos();
@@ -166,6 +167,7 @@ void UImGui::TextUtils::Ruby(const char* textBegin, const char* textEnd, const c
         // Render an invisible button, which will act as our element
         ImGui::InvisibleButton("##ruby", size);
     }
+    ImGui::PopID();
     ImGui::EndGroup();
 }
 
@@ -193,6 +195,8 @@ void UImGui::TextUtils::SubSuperscript(const char* subscriptBegin, const char* s
                                                                             -1.0f, subscriptBegin, subscriptEnd);
     ImVec2 min = ImGui::GetCursorScreenPos();
     min.y -= offset;
+    ImGui::PushID(subscriptBegin, subscriptEnd);
+    ImGui::PushID(superscriptBegin, superscriptEnd);
     {
 
         const ImVec2 max = { min.x + superscriptTextSize.x, min.y + superscriptTextSize.y + ImGui::GetStyle().FramePadding.y - offset };
@@ -213,4 +217,6 @@ void UImGui::TextUtils::SubSuperscript(const char* subscriptBegin, const char* s
 
         ImGui::InvisibleButton("##subscript", size);
     }
+    ImGui::PopID();
+    ImGui::PopID();
 }

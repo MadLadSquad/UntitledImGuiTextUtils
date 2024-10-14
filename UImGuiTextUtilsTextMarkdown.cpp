@@ -108,6 +108,8 @@ UImGui::TextUtils::WidgetState UImGui::TextUtils::HighlightWrapped(const TString
 
 void UImGui::TextUtils::Blockquote(const Colour colour) noexcept
 {
+    static int i = 0;
+
     // Get the font size
     const float scale = ImGui::GetFontSize();
 
@@ -123,7 +125,10 @@ void UImGui::TextUtils::Blockquote(const Colour colour) noexcept
     ImGui::GetWindowDrawList()->AddRectFilled(min, max, colour);
 
     // Render an invisible button, which will act as our element
+    ImGui::PushID(i);
     ImGui::InvisibleButton("##bq", size);
+    ImGui::PopID();
+    i++;
 }
 
 void UImGui::TextUtils::BlockquoteWrapped(const char* text, const char* end, const Colour colour) noexcept
@@ -160,7 +165,9 @@ void UImGui::TextUtils::CodeBlock(const char* begin, const char* end, const bool
                                         begin, end, wrapWidth);
 
     // Render an invisible button, which will act as our element
+    ImGui::PushID(begin, end);
     ImGui::InvisibleButton("##code", size);
+    ImGui::PopID();
 }
 
 #ifndef UIMGUI_TEXT_UTILS_DISABLE_STRING
@@ -190,7 +197,9 @@ void UImGui::TextUtils::CodeInlineWrapped(const char* begin, const char* end, co
                                             s, e, -1.0f);
 
         // Render an invisible button, which will act as our element
+        ImGui::PushID(s, e);
         ImGui::InvisibleButton("##code", size);
+        ImGui::PopID();
     });
 }
 
