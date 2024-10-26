@@ -79,6 +79,13 @@ void UImGui::TextUtils::ShowDemoWindow(void* bOpen) noexcept
 
     if (ImGui::CollapsingHeader("Annotations"))
     {
+        static const TString subscript = "3";
+        static const TString superscript = "6";
+        static const TString rubyText = "Kanji";
+        static const TString rubyAnnotationText = "han4zi4";
+        static const TString codeInlinePadding = "ImGuiStyleVar_WindowPadding";
+        static const TString codeInlineSpacing = "ImGuiStyleVar_ItemSpacing";
+        static const TString codeInlineSettings = "{ 0.0f, 0.0f }";
 
         ImGui::SeparatorText("Subscript and superscript");
 
@@ -87,7 +94,7 @@ void UImGui::TextUtils::ShowDemoWindow(void* bOpen) noexcept
 
         ImGui::Text("C");
         ImGui::SameLine();
-        SubSuperscript("3", nullptr, "6", nullptr);
+        SubSuperscript(subscript, superscript);
         ImGui::SameLine();
         ImGui::Text("= 20");
 
@@ -97,24 +104,33 @@ void UImGui::TextUtils::ShowDemoWindow(void* bOpen) noexcept
         ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, { 0.0f, 0.0f });
         ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, { 0.0f, 0.0f });
 
-        Ruby("Kanji", nullptr, "han4zi4", nullptr);
+        Ruby(rubyText, rubyAnnotationText);
         ImGui::PopStyleVar(2);
 
         ImGui::SeparatorText("* Note");
         ImGui::Text("All widgets here were rendered with");
-        CodeInline("ImGuiStyleVar_WindowPadding", nullptr);
+        CodeInline(codeInlinePadding);
         ImGui::SameLine();
         ImGui::Text("and");
         ImGui::SameLine();
-        CodeInline("ImGuiStyleVar_ItemSpacing", nullptr);
+        CodeInline(codeInlineSpacing);
         ImGui::SameLine();
         ImGui::Text("set to");
         ImGui::SameLine();
-        CodeInline("{ 0.0f, 0.0f }", nullptr);
+        CodeInline(codeInlineSettings);
     }
 
     if (ImGui::CollapsingHeader("Rich text"))
     {
+        static const TString underlineWrapped = "Underline with text wrapping. The quick brown fox jumps over the "
+                                                    "lazy dog. The quick brown fox jumps over the lazy dog.";
+        static const TString strikethroughWrapped = "Strikethrough with text wrapping. The quick brown fox jumps "
+                                                        "over the lazy dog. The quick brown fox jumps over the lazy dog.";
+        static const TString linkWrapped = "Link with text wrapping. The quick brown fox jumps over the lazy dog. "
+                                               "The quick brown fox jumps over the lazy dog.";
+        static const TString highlightWrapped = "Highlight with text wrapping. The quick brown fox jumps over the "
+                                                    "lazy dog. The quick brown fox jumps over the lazy dog.";
+
         static auto underlineColour =      ImGui::GetStyle().Colors[ImGuiCol_Text];
         static auto strikethroughColour =  ImGui::GetStyle().Colors[ImGuiCol_Text];
         static auto linkColour =                  UIMGUI_LINK_TEXT_UNVISITED;
@@ -126,8 +142,7 @@ void UImGui::TextUtils::ShowDemoWindow(void* bOpen) noexcept
         ImGui::TextWrapped("Normal text with underlining after it's rendered");
         Underline(underlineColour);
         Underline("Underline wrapper with formatting: %d", underlineColour, i);
-        UnderlineWrapped("Underline with text wrapping. The quick brown fox jumps over the lazy dog. "
-                         "The quick brown fox jumps over the lazy dog.", nullptr, underlineColour);
+        UnderlineWrapped(underlineWrapped, underlineColour);
 
         ImGui::SeparatorText("Strikethrough");
         ImGui::ColorEdit4("Strikethrough colour", reinterpret_cast<float*>(&strikethroughColour));
@@ -135,15 +150,13 @@ void UImGui::TextUtils::ShowDemoWindow(void* bOpen) noexcept
         ImGui::TextWrapped("Normal text with strikethrough after it's rendered");
         Strikethrough(strikethroughColour);
         Strikethrough("Strikethrough wrapper with formatting: %d", strikethroughColour, i);
-        StrikethroughWrapped("Strikethrough with text wrapping. The quick brown fox jumps over the lazy dog. "
-                             "The quick brown fox jumps over the lazy dog.", nullptr, strikethroughColour);
+        StrikethroughWrapped(strikethroughWrapped, strikethroughColour);
 
         ImGui::SeparatorText("Links");
         ImGui::ColorEdit4("Link colour", reinterpret_cast<float*>(&linkColour));
 
         Link("Link", linkColour);
-        LinkWrapped("Link with text wrapping. The quick brown fox jumps over the lazy dog. "
-                             "The quick brown fox jumps over the lazy dog.", nullptr, linkColour);
+        LinkWrapped(linkWrapped, linkColour);
 
         ImGui::SeparatorText("Highlight");
         ImGui::ColorEdit4("Highlight colour", reinterpret_cast<float*>(&highlightColour));
@@ -151,35 +164,41 @@ void UImGui::TextUtils::ShowDemoWindow(void* bOpen) noexcept
         ImGui::TextWrapped("Normal text with highlight after it's rendered");
         Highlight(highlightColour);
         Highlight("Highlight wrapper with formatting: %d", highlightColour, i);
-        HighlightWrapped("Highlight with text wrapping. The quick brown fox jumps over the lazy dog. "
-                             "The quick brown fox jumps over the lazy dog.", nullptr, highlightColour);
+        HighlightWrapped(highlightWrapped, highlightColour);
     }
 
     if (ImGui::CollapsingHeader("Code"))
     {
-        static auto backgroundColour = UIMGUI_BLOCKQUOTE_TEXT_COLOUR;
-        ImGui::ColorEdit4("Code background colour", reinterpret_cast<float*>(&backgroundColour));
-
-        ImGui::SeparatorText("Code blocks");
-        static bool bWrapCodeBlock = false;
-        ImGui::Checkbox("Code block text wrapping", &bWrapCodeBlock);
-        CodeBlock(R"(#include <iostream>
+        static const TString codeInline = "This can be in the middle of a sentence";
+        static const TString codeInlineWrapped = "This is inline code with wrapping. The quick brown fox jumps over"
+                                                     " the lazy dog. The quick brown fox jumps over the lazy dog.";
+        static const TString codeBlock = R"(#include <iostream>
 
 int main(int argc, char** argv)
 {
     std::cout << "Hello, World!" << std::endl;
     return 0;
 }
-)", nullptr, bWrapCodeBlock, backgroundColour);
+)";
+
+        static auto backgroundColour = UIMGUI_BLOCKQUOTE_TEXT_COLOUR;
+        ImGui::ColorEdit4("Code background colour", reinterpret_cast<float*>(&backgroundColour));
+
+        ImGui::SeparatorText("Code blocks");
+        static bool bWrapCodeBlock = false;
+        ImGui::Checkbox("Code block text wrapping", &bWrapCodeBlock);
+        CodeBlock(codeBlock, bWrapCodeBlock, backgroundColour);
 
         ImGui::SeparatorText("Inline code");
-        CodeInline("This can be in the middle of a sentence", nullptr);
-        CodeInlineWrapped("This is inline code with wrapping. The quick brown fox jumps over the lazy dog."
-                          "The quick brown fox jumps over the lazy dog.", nullptr);
+        CodeInline(codeInline);
+        CodeInlineWrapped(codeInlineWrapped);
     }
 
     if (ImGui::CollapsingHeader("Blockquotes"))
     {
+        static const TString blockquoteWrapped = "Blockquote with wrapping. The quick brown fox jumps over the lazy"
+                                                     " dog. The quick brown fox jumps over the lazy dog. The quick "
+                                                     "brown fox jumps over the lazy dog";
         static auto backgroundColour = UIMGUI_BLOCKQUOTE_TEXT_COLOUR;
         ImGui::ColorEdit4("Blockquote colour", reinterpret_cast<float*>(&backgroundColour));
 
@@ -189,10 +208,7 @@ int main(int argc, char** argv)
 
         Blockquote("Blockquote with formatting: %d", backgroundColour, i);
 
-        BlockquoteWrapped("Blockquote with wrapping. The quick brown fox jumps over the lazy dog. "
-                          "The quick brown fox jumps over the lazy dog. The quick brown fox jumps over the lazy dog",
-                    nullptr,backgroundColour);
-
+        BlockquoteWrapped(blockquoteWrapped,backgroundColour);
     }
 
     ImGui::End();

@@ -47,12 +47,12 @@ void UImGui_TextUtils_BoldWrapped(const char* fmt, ...)
     WRAP_VARIADIC_LIST(UImGui::TextUtils::BoldWrappedV(fmt, args));
 }
 
-void UImGui_TextUtils_BoldV(const char* fmt, const va_list args)
+void UImGui_TextUtils_BoldV(const char* fmt, va_list args)
 {
     UImGui::TextUtils::BoldV(fmt, args);
 }
 
-void UImGui_TextUtils_BoldWrappedV(const char* fmt, const va_list args)
+void UImGui_TextUtils_BoldWrappedV(const char* fmt, va_list args)
 {
     UImGui::TextUtils::BoldWrappedV(fmt, args);
 }
@@ -67,12 +67,12 @@ void UImGui_TextUtils_ItalicWrapped(const char* fmt, ...)
     WRAP_VARIADIC_LIST(UImGui::TextUtils::ItalicWrappedV(fmt, args));
 }
 
-void UImGui_TextUtils_ItalicV(const char* fmt, const va_list args)
+void UImGui_TextUtils_ItalicV(const char* fmt, va_list args)
 {
     UImGui::TextUtils::ItalicV(fmt, args);
 }
 
-void UImGui_TextUtils_ItalicWrappedV(const char* fmt, const va_list args)
+void UImGui_TextUtils_ItalicWrappedV(const char* fmt, va_list args)
 {
     UImGui::TextUtils::ItalicWrappedV(fmt, args);
 }
@@ -87,12 +87,12 @@ void UImGui_TextUtils_BoldItalicWrapped(const char* fmt, ...)
     WRAP_VARIADIC_LIST(UImGui::TextUtils::BoldItalicWrappedV(fmt, args));
 }
 
-void UImGui_TextUtils_BoldItalicV(const char* fmt, const va_list args)
+void UImGui_TextUtils_BoldItalicV(const char* fmt, va_list args)
 {
     UImGui::TextUtils::BoldItalicV(fmt, args);
 }
 
-void UImGui_TextUtils_BoldItalicWrappedV(const char* fmt, const va_list args)
+void UImGui_TextUtils_BoldItalicWrappedV(const char* fmt, va_list args)
 {
     UImGui::TextUtils::BoldItalicWrappedV(fmt, args);
 }
@@ -107,12 +107,12 @@ void UImGui_TextUtils_MonospaceWrapped(const char* fmt, ...)
     WRAP_VARIADIC_LIST(UImGui::TextUtils::MonospaceWrappedV(fmt, args));
 }
 
-void UImGui_TextUtils_MonospaceV(const char* fmt, const va_list args)
+void UImGui_TextUtils_MonospaceV(const char* fmt, va_list args)
 {
     UImGui::TextUtils::MonospaceV(fmt, args);
 }
 
-void UImGui_TextUtils_MonospaceWrappedV(const char* fmt, const va_list args)
+void UImGui_TextUtils_MonospaceWrappedV(const char* fmt, va_list args)
 {
     UImGui::TextUtils::MonospaceWrappedV(fmt, args);
 }
@@ -127,12 +127,12 @@ void UImGui_TextUtils_SmallWrapped(const char* fmt, ...)
     WRAP_VARIADIC_LIST(UImGui::TextUtils::SmallWrappedV(fmt, args));
 }
 
-void UImGui_TextUtils_Small(const char* fmt, const va_list args)
+void UImGui_TextUtils_Small(const char* fmt, va_list args)
 {
     UImGui::TextUtils::SmallV(fmt, args);
 }
 
-void UImGui_TextUtils_SmallWrapped(const char* fmt, const va_list args)
+void UImGui_TextUtils_SmallWrapped(const char* fmt, va_list args)
 {
     UImGui::TextUtils::SmallWrappedV(fmt, args);
 }
@@ -169,7 +169,7 @@ UImGui_TextUtils_WidgetState UImGui_TextUtils_Underline_fmt(const UImGui_TextUti
     return static_cast<UImGui_TextUtils_WidgetState>(bHovered | bClicked);
 }
 
-UImGui_TextUtils_WidgetState UImGui_TextUtils_Underline_fmtV(const UImGui_TextUtils_Colour colour, const char* fmt, const va_list args)
+UImGui_TextUtils_WidgetState UImGui_TextUtils_Underline_fmtV(const UImGui_TextUtils_Colour colour, const char* fmt, va_list args)
 {
     ImGui::TextV(fmt, args);
 
@@ -204,7 +204,7 @@ UImGui_TextUtils_WidgetState UImGui_TextUtils_Strikethrough_fmt(const UImGui_Tex
     return static_cast<UImGui_TextUtils_WidgetState>(bHovered | bClicked);
 }
 
-UImGui_TextUtils_WidgetState UImGui_TextUtils_Strikethrough_fmtV(const UImGui_TextUtils_Colour colour, const char* fmt, const va_list args)
+UImGui_TextUtils_WidgetState UImGui_TextUtils_Strikethrough_fmtV(const UImGui_TextUtils_Colour colour, const char* fmt, va_list args)
 {
     ImGui::TextV(fmt, args);
 
@@ -249,7 +249,7 @@ UImGui_TextUtils_WidgetState UImGui_TextUtils_Highlight_fmt(const UImGui_TextUti
     return static_cast<UImGui_TextUtils_WidgetState>(bHovered | bClicked);
 }
 
-UImGui_TextUtils_WidgetState UImGui_TextUtils_Highlight_fmtV(const UImGui_TextUtils_Colour colour, const char* fmt, const va_list args)
+UImGui_TextUtils_WidgetState UImGui_TextUtils_Highlight_fmtV(const UImGui_TextUtils_Colour colour, const char* fmt, va_list args)
 {
     ImGui::TextV(fmt, args);
 
@@ -281,7 +281,7 @@ void UImGui_TextUtils_Blockquote_fmt(const UImGui_TextUtils_Colour colour, const
     va_end(args);
 }
 
-void UImGui_TextUtils_Blockquote_fmtV(const UImGui_TextUtils_Colour colour, const char* fmt, const va_list args)
+void UImGui_TextUtils_Blockquote_fmtV(const UImGui_TextUtils_Colour colour, const char* fmt, va_list args)
 {
     UImGui::TextUtils::Blockquote(colour);
     ImGui::SameLine();
