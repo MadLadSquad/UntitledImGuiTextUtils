@@ -54,7 +54,6 @@ void UImGui::TextUtils::ShowDemoWindow(void* bOpen) noexcept
     if (ImGui::CollapsingHeader("Text Rendering"))
     {
         ImGui::SeparatorText("Rendering using additional fonts");
-        ImGui::SliderInt("Modify integer", &i, 0, 200);
 
         Bold("This is bold text, it has formatting: %d.", i);
         Italic("This is italic text, it has formatting: %d.", i);
