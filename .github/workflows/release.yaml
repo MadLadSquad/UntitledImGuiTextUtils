@@ -25,7 +25,7 @@ jobs:
           rm -rf .git/
           tar cfJ untitled-imgui-text-utils.tar.xz . || echo "Might have failed"
       - name: Create Release
-        uses: softprops/action-gh-release@master
+        uses: softprops/action-gh-release@v2
         with:
           body: |
             Check our discord for patch notes: https://discord.gg/4kyWu2Vu
