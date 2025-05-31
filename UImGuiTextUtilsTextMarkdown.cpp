@@ -247,18 +247,27 @@ UImGui::TextUtils::WidgetState UImGui::TextUtils::renderWrappedTextGeneric(const
                                                                                                     Colour)>& render) noexcept
 {
     const float scale = ImGui::GetIO().FontGlobalScale;
+    const float size = ImGui::GetFontSize();
     float widthAvail = ImGui::GetContentRegionAvail().x;
     const char* endLine = text;
 
     if (widthAvail > 0.0f)
+#if IMGUI_VERSION_NUM > 19196
+        endLine = ImGui::GetFont()->CalcWordWrapPosition(size * scale, text, end, widthAvail);
+#else
         endLine = ImGui::GetFont()->CalcWordWrapPositionA(scale, text, end, widthAvail);
+#endif
     if (endLine > text && endLine < end)
     {
         if (isPartOfWord(*endLine))
         {
             // Get maximum line width like this because dear imgui rc 1.90.9+ deprecated these
             const float nextLineWidth = (ImGui::GetContentRegionAvail() + ImGui::GetCursorScreenPos()).x;
+#if IMGUI_VERSION_NUM > 19196
+            const char* nextLineEnd = ImGui::GetFont()->CalcWordWrapPosition(size * scale, text, end, nextLineWidth);
+#else
             const char* nextLineEnd = ImGui::GetFont()->CalcWordWrapPositionA(scale, text, end, nextLineWidth);
+#endif
             if (nextLineEnd == end || (nextLineEnd <= end && !isPartOfWord(*nextLineEnd)))
                 endLine = text;
         }
@@ -281,7 +290,11 @@ UImGui::TextUtils::WidgetState UImGui::TextUtils::renderWrappedTextGeneric(const
         text = endLine;
         if (*text == ' ')
             ++text;
+#if IMGUI_VERSION_NUM > 19196
+        endLine = ImGui::GetFont()->CalcWordWrapPosition(size * scale, text, end, widthAvail);
+#else
         endLine = ImGui::GetFont()->CalcWordWrapPositionA(scale, text, end, widthAvail);
+#endif
         if (text == endLine)
             endLine++;
         ImGui::PushTextWrapPos(-1.0f);
