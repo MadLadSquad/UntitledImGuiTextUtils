@@ -5,10 +5,17 @@
 // TODO: Remove version num checks on January 1st
 #include "UImGuiTextUtils.hpp"
 
+// All font calculations for this file are in the small font so small font calculations are already done here.
+//
+// Because dear imgui's new font API is not font-specific we're calculating the font using the pushed font size / 2.
+// The font size is the height, and we're after that here too. For small fonts we want to cover half the size of the
+// normal glyphs + the frame padding Y space. This is because normal glyphs have some padding already applied and also
+// because we're using FramePadding.y - (the small font's size / 2) = FramePadding.y - ((FontSize / 2 + FramePadding.y) / 2)
+// which gives us a nice offset that places us between the half of the font size and the half of the frame padding
 #if IMGUI_VERSION_NUM > 19197
-    #define LEGACY_SIZE(x) ImGui::GetFontSize()
+    #define LEGACY_SIZE(x) ((ImGui::GetFontSize() / 2) + ImGui::GetStyle().FramePadding.y)
 #else
-    #define LEGACY_SIZE(x) UIMGUI_TEXT_UTILS_DATA->x->FontSize
+    #define LEGACY_SIZE(x) ((UIMGUI_TEXT_UTILS_DATA->x->FontSize / 2) + ImGui::GetStyle().FramePadding.y)
 #endif
 
 #define CUSTOM_FONT_BOILERPLATE(x, y) va_list args;             \
@@ -104,22 +111,30 @@ void UImGui::TextUtils::MonospaceWrappedV(const char* fmt, va_list list) noexcep
 
 void UImGui::TextUtils::Small(const char* fmt, ...) noexcept
 {
+    ImGui::PushFontSize(LEGACY_SIZE(smallFont));
     CUSTOM_FONT_BOILERPLATE(fmt, smallFont);
+    ImGui::PopFontSize();
 }
 
 void UImGui::TextUtils::SmallV(const char* fmt, va_list list) noexcept
 {
+    ImGui::PushFontSize(LEGACY_SIZE(smallFont));
     customFontGenericText(fmt, UIMGUI_TEXT_UTILS_DATA->smallFont, list);
+    ImGui::PopFontSize();
 }
 
 void UImGui::TextUtils::SmallWrapped(const char* fmt, ...) noexcept
 {
+    ImGui::PushFontSize(LEGACY_SIZE(smallFont));
     CUSTOM_FONT_BOILERPLATE_WRAPPED(fmt, smallFont);
+    ImGui::PopFontSize();
 }
 
 void UImGui::TextUtils::SmallWrappedV(const char* fmt, va_list list) noexcept
 {
+    ImGui::PushFontSize(LEGACY_SIZE(smallFont));
     customFontGenericTextWrapped(fmt, UIMGUI_TEXT_UTILS_DATA->smallFont, list);
+    ImGui::PopFontSize();
 }
 
 void UImGui::TextUtils::customFontGenericText(const char* fmt, ImFont* font, va_list args) noexcept
