@@ -111,42 +111,37 @@ void UImGui::TextUtils::MonospaceWrappedV(const char* fmt, va_list list) noexcep
 
 void UImGui::TextUtils::Small(const char* fmt, ...) noexcept
 {
-    ImGui::PushFontSize(LEGACY_SIZE(smallFont));
     CUSTOM_FONT_BOILERPLATE(fmt, smallFont);
-    ImGui::PopFontSize();
 }
 
 void UImGui::TextUtils::SmallV(const char* fmt, va_list list) noexcept
 {
-    ImGui::PushFontSize(LEGACY_SIZE(smallFont));
     customFontGenericText(fmt, UIMGUI_TEXT_UTILS_DATA->smallFont, list);
-    ImGui::PopFontSize();
 }
 
 void UImGui::TextUtils::SmallWrapped(const char* fmt, ...) noexcept
 {
-    ImGui::PushFontSize(LEGACY_SIZE(smallFont));
     CUSTOM_FONT_BOILERPLATE_WRAPPED(fmt, smallFont);
-    ImGui::PopFontSize();
 }
 
 void UImGui::TextUtils::SmallWrappedV(const char* fmt, va_list list) noexcept
 {
-    ImGui::PushFontSize(LEGACY_SIZE(smallFont));
     customFontGenericTextWrapped(fmt, UIMGUI_TEXT_UTILS_DATA->smallFont, list);
-    ImGui::PopFontSize();
 }
 
 void UImGui::TextUtils::customFontGenericText(const char* fmt, ImFont* font, va_list args) noexcept
 {
-    ImGui::PushFont(font);
+    ImGui::PushFont(font, 0.0f);
     ImGui::TextV(fmt, args);
     ImGui::PopFont();
 }
 
 void UImGui::TextUtils::customFontGenericTextWrapped(const char* fmt, ImFont* font, va_list args) noexcept
 {
-    ImGui::PushFont(font);
+    float scale = 0.0f;
+    if (font == UIMGUI_TEXT_UTILS_DATA->smallFont)
+        scale = LEGACY_SIZE(smallFont);
+    ImGui::PushFont(font, scale);
     ImGui::TextWrappedV(fmt, args);
     ImGui::PopFont();
 }
