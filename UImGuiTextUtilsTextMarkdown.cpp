@@ -2,14 +2,7 @@
 // - Underlined text
 // - Strikethrough text
 // - Highlight text
-// TODO: Remove version num checks on January 1st
 #include "UImGuiTextUtils.hpp"
-
-#if IMGUI_VERSION_NUM > 19197
-    #define LEGACY_SIZE(x) ImGui::GetFontSize()
-#else
-    #define LEGACY_SIZE(x) UIMGUI_TEXT_UTILS_DATA->x->FontSize
-#endif
 
 void UImGui::TextUtils::Underline(const Colour colour) noexcept
 {
@@ -158,7 +151,7 @@ void UImGui::TextUtils::CodeBlock(const char* begin, const char* end, const bool
     const float wrapWidth = bWrapText ? ImGui::GetContentRegionAvail().x : -1.0f;
 
     // Get the font size
-    const auto textSize = UIMGUI_TEXT_UTILS_DATA->monospace->CalcTextSizeA(LEGACY_SIZE(monospace), FLT_MAX, wrapWidth, begin, end);
+    const auto textSize = UIMGUI_TEXT_UTILS_DATA->monospace->CalcTextSizeA(ImGui::GetFontSize(), FLT_MAX, wrapWidth, begin, end);
 
     // Calculate rect size and coordinates
     const auto min = ImGui::GetCursorScreenPos();
@@ -167,7 +160,7 @@ void UImGui::TextUtils::CodeBlock(const char* begin, const char* end, const bool
 
     // Add rectangle with min, max and the colour
     ImGui::GetWindowDrawList()->AddRectFilled(min, max, backgroundColour);
-    ImGui::GetWindowDrawList()->AddText(UIMGUI_TEXT_UTILS_DATA->monospace, LEGACY_SIZE(monospace), min,
+    ImGui::GetWindowDrawList()->AddText(UIMGUI_TEXT_UTILS_DATA->monospace, ImGui::GetFontSize(), min,
                                         ImGui::ColorConvertFloat4ToU32(ImGui::GetStyle().Colors[ImGuiCol_Text]),
                                         begin, end, wrapWidth);
 
@@ -190,7 +183,7 @@ void UImGui::TextUtils::CodeInlineWrapped(const char* begin, const char* end, co
                              [](Colour) -> void {}, [](Colour) -> void {}, [](TextUtilsData const* data, const char* s, const char* e, const Colour colour) -> void
     {
         // Get the font size
-        const auto textSize = data->monospace->CalcTextSizeA(LEGACY_SIZE(monospace), FLT_MAX, -1.0f, s, e);
+        const auto textSize = data->monospace->CalcTextSizeA(ImGui::GetFontSize(), FLT_MAX, -1.0f, s, e);
 
         // Calculate rect size and coordinates
         const auto min = ImGui::GetCursorScreenPos();
@@ -199,7 +192,7 @@ void UImGui::TextUtils::CodeInlineWrapped(const char* begin, const char* end, co
 
         // Add rectangle with min, max and the colour
         ImGui::GetWindowDrawList()->AddRectFilled(min, max, colour);
-        ImGui::GetWindowDrawList()->AddText(data->monospace, LEGACY_SIZE(monospace), min,
+        ImGui::GetWindowDrawList()->AddText(data->monospace, ImGui::GetFontSize(), min,
                                             ImGui::ColorConvertFloat4ToU32(ImGui::GetStyle().Colors[ImGuiCol_Text]),
                                             s, e, -1.0f);
 
@@ -220,7 +213,7 @@ void UImGui::TextUtils::CodeInlineWrapped(const TString& text, const Colour back
 void UImGui::TextUtils::CodeInline(const char* begin, const char* end, const Colour backgroundColour) noexcept
 {
     // Get the font size
-    const auto textSize = UIMGUI_TEXT_UTILS_DATA->monospace->CalcTextSizeA(LEGACY_SIZE(monospace), FLT_MAX, -1.0f, begin, end);
+    const auto textSize = UIMGUI_TEXT_UTILS_DATA->monospace->CalcTextSizeA(ImGui::GetFontSize(), FLT_MAX, -1.0f, begin, end);
 
     // Calculate rect size and coordinates
     const auto min = ImGui::GetCursorScreenPos();
@@ -229,7 +222,7 @@ void UImGui::TextUtils::CodeInline(const char* begin, const char* end, const Col
 
     // Add rectangle with min, max and the colour
     ImGui::GetWindowDrawList()->AddRectFilled(min, max, backgroundColour);
-    ImGui::GetWindowDrawList()->AddText(UIMGUI_TEXT_UTILS_DATA->monospace, LEGACY_SIZE(monospace), min,
+    ImGui::GetWindowDrawList()->AddText(UIMGUI_TEXT_UTILS_DATA->monospace, ImGui::GetFontSize(), min,
                                         ImGui::ColorConvertFloat4ToU32(ImGui::GetStyle().Colors[ImGuiCol_Text]),
                                         begin, end, -1.0f);
 
