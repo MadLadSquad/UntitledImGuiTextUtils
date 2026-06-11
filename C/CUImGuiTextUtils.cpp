@@ -215,7 +215,7 @@ UImGui_TextUtils_WidgetState UImGui_TextUtils_Strikethrough_fmtV(const UImGui_Te
     return static_cast<UImGui_TextUtils_WidgetState>(bHovered | bClicked);
 }
 
-UImGui_TextUtils_WidgetState UimGui_TextUtils_StrikethroughWrapped(const char* text, const char* end, const UImGui_TextUtils_Colour colour)
+UImGui_TextUtils_WidgetState UImGui_TextUtils_StrikethroughWrapped(const char* text, const char* end, const UImGui_TextUtils_Colour colour)
 {
     return UImGui::TextUtils::StrikethroughWrapped(text, end, colour);
 }

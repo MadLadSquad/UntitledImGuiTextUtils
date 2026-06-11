@@ -57,7 +57,7 @@ extern "C"
     MLS_PUBLIC_API void UImGui_TextUtils_Strikethrough(UImGui_TextUtils_Colour colour);
     MLS_PUBLIC_API UImGui_TextUtils_WidgetState UImGui_TextUtils_Strikethrough_fmt(UImGui_TextUtils_Colour colour, const char* fmt, ...);
     MLS_PUBLIC_API UImGui_TextUtils_WidgetState UImGui_TextUtils_Strikethrough_fmtV(UImGui_TextUtils_Colour colour, const char* fmt, va_list args);
-    MLS_PUBLIC_API UImGui_TextUtils_WidgetState UimGui_TextUtils_StrikethroughWrapped(const char* text, const char* end, UImGui_TextUtils_Colour colour);
+    MLS_PUBLIC_API UImGui_TextUtils_WidgetState UImGui_TextUtils_StrikethroughWrapped(const char* text, const char* end, UImGui_TextUtils_Colour colour);
 
     MLS_PUBLIC_API void UImGui_TextUtils_Link(const char* text, UImGui_TextUtils_Colour colour, UImGui_TextUtils_LinkCallback callback);
     MLS_PUBLIC_API void UImGui_TextUtils_LinkWrapped(const char* text, const char* end, UImGui_TextUtils_Colour colour, UImGui_TextUtils_LinkCallback callback);
