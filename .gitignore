@@ -30,3 +30,6 @@
 *.exe
 *.out
 *.app
+graphify-out/
+.agents/
+.claude/

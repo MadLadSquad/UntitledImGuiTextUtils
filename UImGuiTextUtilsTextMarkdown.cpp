@@ -28,7 +28,9 @@ bool UImGui::TextUtils::isPartOfWord(const char character) noexcept
 void UImGui::TextUtils::Link(const char* text, const Colour colour, const std::function<void(const char* link)>& clicked) noexcept
 {
     ImGui::PushStyleColor(ImGuiCol_Text, ImU32{colour});
-    const auto state = Underline(text, colour, "");
+    // Pass the text as an argument instead of as the format string, otherwise any percent sign in it, which URLs
+    // are full of because of percent encoding, gets read as a format specifier
+    const auto state = Underline("%s", colour, text);
     if (state & UIMGUI_TEXT_UTILS_WIDGET_STATE_HOVERED)
     {
         ImGui::SetMouseCursor(ImGuiMouseCursor_Hand);
@@ -293,14 +295,20 @@ UImGui::TextUtils::WidgetState UImGui::TextUtils::renderWrappedTextGeneric(const
     while (endLine < end)
     {
         text = endLine;
-        if (*text == ' ')
+        // Skip the space that caused the break. Bounds checked because the text may end on one, in which case
+        // there's nothing left to render on the next line
+        if (text < end && *text == ' ')
             ++text;
+        if (text >= end)
+            break;
 #if IMGUI_VERSION_NUM > 19196
         endLine = ImGui::GetFont()->CalcWordWrapPosition(size * scale, text, end, widthAvail);
 #else
         endLine = ImGui::GetFont()->CalcWordWrapPositionA(scale, text, end, widthAvail);
 #endif
-        if (text == endLine)
+        // No progress was made, force at least a single character so we don't loop forever. Can never go past the
+        // end pointer because of the bounds check above
+        if (endLine == text)
             endLine++;
         ImGui::PushTextWrapPos(-1.0f);
         before(colour);

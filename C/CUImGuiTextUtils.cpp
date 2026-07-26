@@ -8,6 +8,16 @@
 
 #define dt_cast(x) static_cast<UImGui::TextUtilsData*>(x)
 
+// C callers have no way of spelling the C++ default argument for link click events, so a null callback maps to the
+// default one. Constructing an std::function out of a null function pointer would otherwise leave it empty, which
+// throws std::bad_function_call when invoked, terminating the application since all our functions are noexcept
+static std::function<void(const char*)> linkCallbackOrDefault(const UImGui_TextUtils_LinkCallback callback) noexcept
+{
+    if (callback != nullptr)
+        return callback;
+    return UImGui::TextUtils::getTextUtilsData()->defaultLinkClickEvent;
+}
+
 UImGui_CTextUtilsData* UImGui_TextUtilsData_allocate()
 {
     return new UImGui::TextUtilsData{};
@@ -127,12 +137,12 @@ void UImGui_TextUtils_SmallWrapped(const char* fmt, ...)
     WRAP_VARIADIC_LIST(UImGui::TextUtils::SmallWrappedV(fmt, args));
 }
 
-void UImGui_TextUtils_Small(const char* fmt, va_list args)
+void UImGui_TextUtils_SmallV(const char* fmt, va_list args)
 {
     UImGui::TextUtils::SmallV(fmt, args);
 }
 
-void UImGui_TextUtils_SmallWrapped(const char* fmt, va_list args)
+void UImGui_TextUtils_SmallWrappedV(const char* fmt, va_list args)
 {
     UImGui::TextUtils::SmallWrappedV(fmt, args);
 }
@@ -222,12 +232,12 @@ UImGui_TextUtils_WidgetState UImGui_TextUtils_StrikethroughWrapped(const char* t
 
 void UImGui_TextUtils_Link(const char* text, const UImGui_TextUtils_Colour colour, const UImGui_TextUtils_LinkCallback callback)
 {
-    UImGui::TextUtils::Link(text, colour, callback);
+    UImGui::TextUtils::Link(text, colour, linkCallbackOrDefault(callback));
 }
 
 void UImGui_TextUtils_LinkWrapped(const char* text, const char* end, const UImGui_TextUtils_Colour colour, const UImGui_TextUtils_LinkCallback callback)
 {
-    UImGui::TextUtils::LinkWrapped(text, end, colour, callback);
+    UImGui::TextUtils::LinkWrapped(text, end, colour, linkCallbackOrDefault(callback));
 }
 
 void UImGui_TextUtils_Highlight(const UImGui_TextUtils_Colour colour)

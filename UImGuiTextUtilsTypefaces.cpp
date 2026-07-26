@@ -24,6 +24,16 @@ va_start(args, x);                                                  \
 customFontGenericTextWrapped(fmt, UIMGUI_TEXT_UTILS_DATA->y, args); \
 va_end(args)
 
+// Checks whether a text range renders no glyphs at all. Following dear imgui's convention, a null end pointer
+// means that the string is null-terminated. Needed because dear imgui asserts on 0-sized InvisibleButtons, which
+// every manually laid out widget in this file uses to advance the cursor
+static bool isTextRangeEmpty(const char* begin, const char* end) noexcept
+{
+    if (begin == nullptr)
+        return true;
+    return end != nullptr ? begin >= end : *begin == '\0';
+}
+
 void UImGui::TextUtils::Bold(const char* fmt, ...) noexcept
 {
     CUSTOM_FONT_BOILERPLATE(fmt, bold);
@@ -124,55 +134,81 @@ void UImGui::TextUtils::SmallWrappedV(const char* fmt, va_list list) noexcept
     customFontGenericTextWrapped(fmt, UIMGUI_TEXT_UTILS_DATA->smallFont, list);
 }
 
+// The small font is the only typeface rendered at a size we compute ourselves. Every other one keeps the size dear
+// imgui already has pushed, which its font API spells as 0.0f
+static float customFontSize(const ImFont* font) noexcept
+{
+    return font == UImGui::TextUtils::getTextUtilsData()->smallFont ? SMALL_FONT_SIZE(smallFont) : 0.0f;
+}
+
 void UImGui::TextUtils::customFontGenericText(const char* fmt, ImFont* font, va_list args) noexcept
 {
-    ImGui::PushFont(font, 0.0f);
+    ImGui::PushFont(font, customFontSize(font));
     ImGui::TextV(fmt, args);
     ImGui::PopFont();
 }
 
 void UImGui::TextUtils::customFontGenericTextWrapped(const char* fmt, ImFont* font, va_list args) noexcept
 {
-    float scale = 0.0f;
-    if (font == UIMGUI_TEXT_UTILS_DATA->smallFont)
-        scale = SMALL_FONT_SIZE(smallFont);
-    ImGui::PushFont(font, scale);
+    ImGui::PushFont(font, customFontSize(font));
     ImGui::TextWrappedV(fmt, args);
     ImGui::PopFont();
 }
 
 void UImGui::TextUtils::Ruby(const char* textBegin, const char* textEnd, const char* annotationBegin, const char* annotationEnd, const bool bWrapAnnotation, const bool bWrapText) noexcept
 {
-    static float width = 0.0f;
+    const bool bHasAnnotation = !isTextRangeEmpty(annotationBegin, annotationEnd);
+    const bool bHasText = !isTextRangeEmpty(textBegin, textEnd);
+
+    // Nothing to render, bail out before opening a group we'd never put an item into
+    if (!bHasAnnotation && !bHasText)
+        return;
 
     ImGui::BeginGroup();
     const auto offset = (SMALL_FONT_SIZE(smallFont) / 2);
+    const float widthAvail = ImGui::GetContentRegionAvail().x;
 
-    ImGui::PushID(textBegin, textEnd);
+    // The annotation is rendered first but has to wrap to the width of the main text sitting below it, so the main
+    // text is measured up front. This used to travel between the 2 blocks through a static, which lagged a frame
+    // behind and got overwritten by every other Ruby widget rendered in the same frame
+    const float textWrapWidth = bWrapText ? widthAvail : -1.0f;
+    const auto textSize = bHasText ? ImGui::CalcTextSize(textBegin, textEnd, false, textWrapWidth) : ImVec2{ 0.0f, 0.0f };
+
+    // With no main text underneath it there's no width to match, so the annotation wraps to the space we have
+    float annotationWidth = -1.0f;
+    if (bWrapAnnotation)
+        annotationWidth = bHasText ? std::min(textSize.x, widthAvail) : widthAvail;
+
+    // At least one of the 2 ranges is non-empty by this point, so hash the ID out of whichever one we actually
+    // have. An empty pointer pair would make dear imgui hash starting from a null address
+    if (bHasText)
+        ImGui::PushID(textBegin, textEnd);
+    else
+        ImGui::PushID(annotationBegin, annotationEnd);
     // Render
+    if (bHasAnnotation)
     {
         auto min = ImGui::GetCursorScreenPos();
         min.y -= offset;
 
-        const auto textSize = UIMGUI_TEXT_UTILS_DATA->smallFont->CalcTextSizeA(SMALL_FONT_SIZE(smallFont), FLT_MAX, width, annotationBegin, annotationEnd);
+        const auto annotationSize = UIMGUI_TEXT_UTILS_DATA->smallFont->CalcTextSizeA(SMALL_FONT_SIZE(smallFont), FLT_MAX, annotationWidth, annotationBegin, annotationEnd);
 
-        const ImVec2 max = { min.x + textSize.x, min.y + textSize.y };
-        const ImVec2 size = {max.x - min.x, max.y - min.y };
         ImGui::GetWindowDrawList()->AddText(UIMGUI_TEXT_UTILS_DATA->smallFont, SMALL_FONT_SIZE(smallFont), min,
                                             ImGui::ColorConvertFloat4ToU32(ImGui::GetStyle().Colors[ImGuiCol_Text]),
-                                            annotationBegin, annotationEnd, width);
+                                            annotationBegin, annotationEnd, annotationWidth);
         // Render an invisible button, which will act as our element
-        ImGui::InvisibleButton("##rubyannotation", size);
+        ImGui::InvisibleButton("##rubyannotation", annotationSize);
     }
+    if (bHasText)
     {
-        auto min = ImGui::GetItemRectMin();
-        min.y += offset;
+        // Without an annotation there's no item above us to align to, so start at the cursor instead
+        auto min = ImGui::GetCursorScreenPos();
+        if (bHasAnnotation)
+        {
+            min = ImGui::GetItemRectMin();
+            min.y += offset;
+        }
 
-        const auto textSize = ImGui::CalcTextSize(textBegin, textEnd, false, bWrapText ? ImGui::GetContentRegionAvail().x : -1.0f);
-        width = bWrapAnnotation ? std::min(textSize.x, ImGui::GetContentRegionAvail().x) : -1.0f;
-
-        const ImVec2 max = { min.x + textSize.x, min.y + textSize.y };
-        const ImVec2 size = {max.x - min.x, max.y - min.y };
         ImGui::GetWindowDrawList()->AddText(ImGui::GetFont(),
 #if IMGUI_VERSION_NUM > 19197
                                             ImGui::GetFontSize(),
@@ -181,9 +217,9 @@ void UImGui::TextUtils::Ruby(const char* textBegin, const char* textEnd, const c
 #endif
                                             min,
                                             ImGui::ColorConvertFloat4ToU32(ImGui::GetStyle().Colors[ImGuiCol_Text]),
-                                            textBegin, textEnd, width);
+                                            textBegin, textEnd, textWrapWidth);
         // Render an invisible button, which will act as our element
-        ImGui::InvisibleButton("##ruby", size);
+        ImGui::InvisibleButton("##ruby", textSize);
     }
     ImGui::PopID();
     ImGui::EndGroup();
@@ -206,16 +242,26 @@ void UImGui::TextUtils::SubSuperscript(const TString& subscript, const TString& 
 void UImGui::TextUtils::SubSuperscript(const char* subscriptBegin, const char* subscriptEnd,
                                        const char* superscriptBegin, const char* superscriptEnd) noexcept
 {
+    const bool bHasSubscript = !isTextRangeEmpty(subscriptBegin, subscriptEnd);
+    const bool bHasSuperscript = !isTextRangeEmpty(superscriptBegin, superscriptEnd);
+
+    // Setting either text block to an empty string doesn't render it, so with both empty there's nothing to do
+    if (!bHasSubscript && !bHasSuperscript)
+        return;
+
     const auto offset = (SMALL_FONT_SIZE(smallFont) / 2);
-    const auto superscriptTextSize = UIMGUI_TEXT_UTILS_DATA->smallFont->CalcTextSizeA(SMALL_FONT_SIZE(smallFont), FLT_MAX,
-                                                                            -1.0f, superscriptBegin, superscriptEnd);
-    const auto subscriptTextSize = UIMGUI_TEXT_UTILS_DATA->smallFont->CalcTextSizeA(SMALL_FONT_SIZE(smallFont), FLT_MAX,
-                                                                            -1.0f, subscriptBegin, subscriptEnd);
     ImVec2 min = ImGui::GetCursorScreenPos();
     min.y -= offset;
-    ImGui::PushID(subscriptBegin, subscriptEnd);
-    ImGui::PushID(superscriptBegin, superscriptEnd);
+    // Only hash IDs out of the ranges we actually have. An empty pointer pair would make dear imgui hash starting
+    // from a null address
+    if (bHasSubscript)
+        ImGui::PushID(subscriptBegin, subscriptEnd);
+    if (bHasSuperscript)
+        ImGui::PushID(superscriptBegin, superscriptEnd);
+    if (bHasSuperscript)
     {
+        const auto superscriptTextSize = UIMGUI_TEXT_UTILS_DATA->smallFont->CalcTextSizeA(SMALL_FONT_SIZE(smallFont), FLT_MAX,
+                                                                                -1.0f, superscriptBegin, superscriptEnd);
 
         const ImVec2 max = { min.x + superscriptTextSize.x, min.y + superscriptTextSize.y + ImGui::GetStyle().FramePadding.y - offset };
         const ImVec2 size = { max.x - min.x, max.y - min.y };
@@ -225,8 +271,15 @@ void UImGui::TextUtils::SubSuperscript(const char* subscriptBegin, const char* s
 
         ImGui::InvisibleButton("##superscript", size);
     }
-    ImGui::SameLine();
+    if (bHasSubscript)
     {
+        // Only join the subscript to the superscript if the latter was actually rendered
+        if (bHasSuperscript)
+            ImGui::SameLine();
+
+        const auto subscriptTextSize = UIMGUI_TEXT_UTILS_DATA->smallFont->CalcTextSizeA(SMALL_FONT_SIZE(smallFont), FLT_MAX,
+                                                                                -1.0f, subscriptBegin, subscriptEnd);
+
         const ImVec2 max = { min.x + subscriptTextSize.x, min.y + subscriptTextSize.y + ImGui::GetStyle().FramePadding.y - offset };
         const ImVec2 size = { max.x - min.x, max.y - min.y };
 
@@ -236,6 +289,8 @@ void UImGui::TextUtils::SubSuperscript(const char* subscriptBegin, const char* s
 
         ImGui::InvisibleButton("##subscript", size);
     }
-    ImGui::PopID();
-    ImGui::PopID();
+    if (bHasSuperscript)
+        ImGui::PopID();
+    if (bHasSubscript)
+        ImGui::PopID();
 }
